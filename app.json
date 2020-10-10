@@ -1,0 +1,8 @@
+{
+  "name": "Why Yeezy and Why Not",
+  "description": "Scraped StolX.com data and visualized major Yeezy performances",
+  "repository": "https://github.com/rimhoho/why-yeezy-and-why-not",
+  "logo": "",
+  "keywords": ["BeautifulSoup", "D3.js", "@keyframes", "heroku"],
+  "image": ""
+}

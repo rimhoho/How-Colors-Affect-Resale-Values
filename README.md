@@ -1,2 +1,5 @@
-# why-I-dont-buy-yeezy-anymore
-Following up my previous project, [Sneakers-lover](https://github.com/rimhoho/sneakers-lover), I had a couple of questions to get answers.
+# Why Yeezy and Why Not
+Scraped StolX.com data and visualized major Yeezy performances
+
+## Introduction
+Following up my previous project, [Sneakers-lover](https://sneaker-lover.herokuapp.com/), I have a couple of questions to get answers.
