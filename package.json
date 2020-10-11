@@ -1,7 +1,7 @@
 {
   "name": "why-yeezy-and-why-not",
   "version": "0.3.0",
-  "description": "Scraped StolX.com data and visualized major Yeezy performances",
+  "description": "Scraped StockX.com data and visualized major Yeezy performances",
   "engines": {
     "node": "12.x"
   },
