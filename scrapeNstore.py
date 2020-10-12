@@ -9,6 +9,7 @@ import csv
 import time 
 import json
 import browser_cookie3
+import re
 
 def onSelenium():
     options = Options()
@@ -18,12 +19,12 @@ def onSelenium():
     totalList = {}
     for page in range(1, 6):
         driver.get(searchResult + str(page))
-        time.sleep(20)
+        time.sleep(30)
         getTitle = driver.find_elements(By.CSS_SELECTOR, '.css-1iephdx.e1inh05x0')
         getImage = driver.find_elements(By.CSS_SELECTOR, '.css-13o3lxt.e1jyvhgp0')
         getProductId = driver.find_elements(By.CSS_SELECTOR, '.tile.css-1bonzt1.e1yt6rrx0')
         getReleaseDate= driver.find_elements(By.CSS_SELECTOR, '.change.release_date.css-td8rut.ees1vvt0')
-        exception = ['RNNR', '(Kids)', '(Kid)','(Infants)', '(Infant)','High', 'Powerphase', '750', '950', 'N/A', 'Reflective', '(Friends & Family)', 'Cleat Turtledove', 'boot']
+        exception = ['RNNR', '(Kids)', '(Kid)','(Infants)', '(Infant)','High', 'Powerphase', '750', '950', 'N/A', '(Reflective)', '(Friends & Family)', 'Cleat Turtledove', 'Desert Boot']
         deleteIndex = []
         for i in range(len(getTitle)):
             if len([stopword for stopword in exception if(stopword in getTitle[i].text)]) != 0 or len([stopword for stopword in exception if(stopword in getReleaseDate[i].text)]) != 0:
@@ -37,16 +38,18 @@ def onSelenium():
         if len(getTitle) == len(getImage) == len(getProductId) == len(getReleaseDate):
             eachPage = []
             for i in range(len(getTitle)):
+                print('-----', getTitle[i].text)
                 eachRow = {}
                 productPageUrl = getProductId[i].find_element(By.TAG_NAME, 'a').get_attribute('href')
-                eachRow['Title'] = getTitle[i].text
-                eachRow['ProductUrl'] = productPageUrl
-                eachRow['ReleaseDate'] = getReleaseDate[i].text
-                eachRow['productId'] = productPageUrl.replace('https://stockx.com/', '')
+                eachRow['title'] = getTitle[i].text
+                eachRow['product_url'] = productPageUrl
+                eachRow['release_date'] = getReleaseDate[i].text
+                eachRow['product_id'] = productPageUrl.replace('https://stockx.com/', '')
                 eachPage.append(eachRow)
         totalList[f'page_{page}'] = eachPage
     driver.refresh()
     driver.quit()
+    print('Page Check: ', totalList.keys())
     return totalList
 
 def onRequest(productIdList):
@@ -67,39 +70,48 @@ def onRequest(productIdList):
         if productObj.status_code == 200:
             productDetail = productObj.json()
             title = productDetail["Product"]["title"]
-            thumbUrl = productDetail["Product"]["media"]["thumbUrl"]
-            retailPrice = productDetail["Product"]["retailPrice"]
-            lowestAsk = productDetail["Product"]["market"]["lowestAsk"]
-            highestBid = productDetail["Product"]["market"]["highestBid"]
-            annualLow = productDetail["Product"]["market"]["annualLow"]
-            annualHigh = productDetail["Product"]["market"]["annualHigh"]
-            salesLast72Hours = productDetail["Product"]["market"]["salesLast72Hours"]
-            numberOfAsks = productDetail["Product"]["market"]["numberOfAsks"]
-            numberOfBids = productDetail["Product"]["market"]["numberOfBids"]
-            pricePremium = productDetail["Product"]["market"]["pricePremium"]
+            thumb_url = productDetail["Product"]["media"]["thumbUrl"]
+            retail_price = productDetail["Product"]["retailPrice"]
+            average_sale_price = productDetail["Product"]["market"]["averageDeadstockPrice"]
+            average_sale_price_rank = productDetail["Product"]["market"]["averageDeadstockPriceRank"]
+            price_premium = productDetail["Product"]["market"]["pricePremium"]
+            price_premium_rank = productDetail["Product"]["market"]["pricePremiumRank"]
+            number_of_sales = productDetail["Product"]["market"]["deadstockSold"]
+            total_sale_volume = productDetail["Product"]["market"]["totalDollars"]
+            annual_high = productDetail["Product"]["market"]["annualHigh"]
+            annual_low = productDetail["Product"]["market"]["annualLow"]
+            trade_range_low = productDetail["Product"]["market"]["deadstockRangeLow"]
+            trade_range_high = productDetail["Product"]["market"]["deadstockRangeHigh"]
+
+            number_of_Asks = productDetail["Product"]["market"]["numberOfAsks"]
+            number_of_Bids = productDetail["Product"]["market"]["numberOfBids"]         
             volatility = productDetail["Product"]["market"]["volatility"]
             description = productDetail["Product"]["description"]
 
-            rowDict =  {'Title': title,
-                        'thumbUrl': thumbUrl,
-                        'Retail Price': retailPrice,
-                        'Lowest Ask': lowestAsk,
-                        'Highest Bid': highestBid,
-                        'Annual Low': annualLow,
-                        'Annual High': annualHigh,
-                        'Number Of Asks': salesLast72Hours,
-                        'Number Of Bids': numberOfAsks,
-                        'salesLast72Hours': numberOfBids,
-                        'pricePremium': pricePremium,
-                        'volatility': volatility,
-                        'description': description}
+            rowDict =  {'title': title,
+                        'thumb_url': thumb_url,
+                        'retail_price': retail_price,
+                        'average_sale_price': average_sale_price,
+                        'average_sale_price_rank': average_sale_price_rank,
+                        'price_premium': price_premium,
+                        'price_premium_rank': price_premium_rank,
+                        'number_of_sales': number_of_sales,
+                        'total_sale_volume': total_sale_volume,
+                        'annual_high': annual_high,
+                        'annual_low': annual_low,
+                        'trade_range_low': trade_range_low,
+                        'trade_range_high': trade_range_high,
+                        'number_of_Asks': number_of_Asks,
+                        'number_of_Bids': number_of_Bids,
+                        'volatility' : volatility,
+                        'description': re.sub(r'[^A-Za-z0-9 ]+', '', description)}
             totalProduct.append(rowDict)
             time.sleep(10)
     print('Data Safely Exported!')
     return totalProduct
 
 def onStore(totalStockX):
-    fields = ['Title', 'ProductUrl', 'ReleaseDate', 'productId', 'thumbUrl', 'Retail Price', 'Lowest Ask', 'Highest Bid', 'Annual Low', 'Annual High', 'Number Of Asks', 'Number Of Bids', 'salesLast72Hours', 'pricePremium', 'volatility', 'description']
+    fields = ['title', 'product_url', 'release_date', 'product_id', 'thumb_url', 'retail_price', 'average_sale_price', 'average_sale_price_rank', 'price_premium', 'price_premium_rank', 'number_of_sales', 'total_sale_volume', 'annual_high', 'annual_low', 'trade_range_low', 'trade_range_high', 'number_of_Asks', 'number_of_Bids', 'volatility', 'description']
     with open('public\data\Yeezy_sales_performace.csv', 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fields)
         writer.writeheader()
@@ -114,30 +126,33 @@ def onInit():
     seleniumData = []
     for page in range(1, 6):
         for item in totalList[f'page_{page}']:
-            productIdList.append(item['productId'])
+            productIdList.append(item['product_id'])
             seleniumData.append(item)
     requestData = onRequest(productIdList)
     print('# of shose: ', len(requestData), len(seleniumData))
     totalStockX = []
     for i in range(len(requestData)):
-        if seleniumData[i]['Title'] != requestData[i]['Title']:
-            print(i, seleniumData[i]['Title'] + '  +  ' + requestData[i]['Title'])
-        if seleniumData[i]['Title'] == requestData[i]['Title']:
-            seleniumData[i]['thumbUrl'] = requestData[i]['thumbUrl']
-            seleniumData[i]['Retail Price'] = requestData[i]['Retail Price']
-            seleniumData[i]['Lowest Ask'] = requestData[i]['Lowest Ask']
-            seleniumData[i]['Highest Bid'] = requestData[i]['Highest Bid']
-            seleniumData[i]['Annual Low'] = requestData[i]['Annual Low']
-            seleniumData[i]['Annual High'] = requestData[i]['Annual High']
-            seleniumData[i]['Number Of Asks'] = requestData[i]['Number Of Asks']
-            seleniumData[i]['Number Of Bids'] = requestData[i]['Number Of Bids']
-            seleniumData[i]['salesLast72Hours'] = requestData[i]['salesLast72Hours']
-            seleniumData[i]['pricePremium'] = requestData[i]['pricePremium']
+        if seleniumData[i]['title'] != requestData[i]['title']:
+            print(i, seleniumData[i]['title'] + '  +  ' + requestData[i]['title'])
+        if seleniumData[i]['title'] == requestData[i]['title']:
+            seleniumData[i]['thumb_url'] = requestData[i]['thumb_url']
+            seleniumData[i]['retail_price'] = requestData[i]['retail_price']
+            seleniumData[i]['average_sale_price'] = requestData[i]['average_sale_price']
+            seleniumData[i]['average_sale_price_rank'] = requestData[i]['average_sale_price_rank']
+            seleniumData[i]['price_premium'] = requestData[i]['price_premium']
+            seleniumData[i]['price_premium_rank'] = requestData[i]['price_premium_rank']
+            seleniumData[i]['number_of_sales'] = requestData[i]['number_of_sales']
+            seleniumData[i]['total_sale_volume'] = requestData[i]['total_sale_volume']
+            seleniumData[i]['annual_high'] = requestData[i]['annual_high']
+            seleniumData[i]['annual_low'] = requestData[i]['annual_low']
+            seleniumData[i]['trade_range_low'] = requestData[i]['trade_range_low']
+            seleniumData[i]['trade_range_high'] = requestData[i]['trade_range_high']
+            seleniumData[i]['number_of_Asks'] = requestData[i]['number_of_Asks']
+            seleniumData[i]['number_of_Bids'] = requestData[i]['number_of_Bids']
             seleniumData[i]['volatility'] = requestData[i]['volatility']
             seleniumData[i]['description'] = requestData[i]['description']
             totalStockX.append(seleniumData[i])
     onStore(totalStockX)
-
 onInit()
 
     # totalList = {'page_5': [
