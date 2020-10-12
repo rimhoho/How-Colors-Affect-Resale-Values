@@ -1,4 +1,5 @@
-### How Shade is important - Focused on the Yeezy Sneakers' Resale Values
+Focused on the Yeezy Sneakers' Resale Values
+## How Shade is important
 
 "Scraped [StockX.com](https://stockx.com/search/adidas/yeezy/release-date?s=yeezy) sales data and visualized major Yeezy performances"
 
