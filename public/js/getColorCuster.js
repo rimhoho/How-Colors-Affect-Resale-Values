@@ -11,7 +11,7 @@ let colorWayNname = [{target: '350 V2 Natural', fullRGB: ["241 244 238", "219 21
                     {target: '350 V2 Sulfur', fullRGB: ["182 175 134", "128 130 86", "203 201 160"]}, 
                     {target: '700 MNVN Phosphor', fullRGB: ["220 230 120", "62 61 64", "225 227 233"]}, 
                     {target: '350 V2 Linen', fullRGB: ["226 220 198", "132 140 149", "232 201 154"]}, 
-                    {target: '700 V3 Alvah', fullRGB: ["51 52 54", "63 67 72", "29 31 32"]}, 
+                    {target: '700 V3 Alvah', fullRGB: ["51 52 54", "63 67 72", "29 31 32"]},  
                     {target: '380 Mist', fullRGB: ["135 130 125", "209 169 137", "84 83 86"]}, 
                     {target: '350 V2 Cinder', fullRGB: ["43 43 45", "30 32 33", "54 56 62"]}, 
                     {target: '350 V2 Desert Sage', fullRGB: ["168 173 169", "249 139 112", "171 175 149"]}, 
