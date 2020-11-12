@@ -1,7 +1,8 @@
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-}
-h2 {text-align: center; margin: 2em 0;}
+body {min-height: 100vh; display: flex;justify-content: center;}
+svg {margin: 0; padding: 0; display: block;}
+text {fill: "inherit"}
+.title {text-align: center; margin: 1.4em 0; font-weight: 100;}
+.bigger-body {font-weight: 300; font-size: 0.8rem;}
+.big-body {font-weight: 300; font-size: 0.66rem;}
+.small-body {font-weight: 100; font-size: 0.6rem;}
+.sneakersInfos {display: flex;justify-content: center;}
