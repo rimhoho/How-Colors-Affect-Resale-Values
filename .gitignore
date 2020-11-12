@@ -8,7 +8,9 @@ npm-debug.log
 .DS_Store
 .ai
 .vscode
+/Image Raw File
 
 # Docker
 Dockerfile
 docker-compose.yml
+
