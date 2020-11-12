@@ -35,7 +35,7 @@ let colorWayNname = [{target: '350 V2 Natural', fullRGB: ["241 244 238", "219 21
                     {target: '350 V2 Citrin', fullRGB: ["215 214 203", "222 213 180", "132 132 118"]}, 
                     {target: '350 V2 Cloud White', fullRGB: ["219 226 229", "226 223 210", "150 167 177"]}, 
                     {target: '700 Magnet', fullRGB: ["86 91 101", "242 151 111", "167 170 178"]}, 
-                    {target: '700 V2 Inertia', fullRGB: ["141 155 169", "253 158 113", "253 160 114"]}, 
+                    {target: '700 V2 Inertia', fullRGB: ["139 151 165", "253 158 113", "253 160 114"]}, 
                     {target: '500 Bone White', fullRGB: ["245 242 234", "214 206 197", "210 207 199"]}, 
                     {target: '350 V2 Lundmark', fullRGB: ["241 237 229", "196 183 167", "162 160 161"]}, 
                     {target: '700 Utility Black', fullRGB: ["30 30 32", "59 61 65", "41 43 49"]}, 
