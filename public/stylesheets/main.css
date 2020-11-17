@@ -1,8 +1,8 @@
 body {min-height: 100vh; display: flex;justify-content: center;}
 svg {margin: 0; padding: 0; display: block;}
-text {fill: "inherit"}
-.title {text-align: center; margin: 1.4em 0; font-weight: 100;}
-.bigger-body {font-weight: 300; font-size: 0.8rem;}
-.big-body {font-weight: 300; font-size: 0.66rem;}
-.small-body {font-weight: 100; font-size: 0.6rem;}
-.sneakersInfos {display: flex;justify-content: center;}
+
+.title {text-align: center; margin: 1.4em 0; font-weight: 300;}
+.bigger-body {font-weight: 700; font-size: 0.76rem; letter-spacing: -0.02em}
+.big-body {font-weight: 700; font-size: 0.7rem; letter-spacing: -0.03em; word-spacing: -0.16em; }
+.small-body {font-weight: 500; font-size: 0.57rem; letter-spacing: -0.02em}
+.smaller-body {font-weight: 300; font-size: 0.56rem; letter-spacing: -0.02em}
