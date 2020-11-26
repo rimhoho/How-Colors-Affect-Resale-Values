@@ -5,16 +5,31 @@
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="https://d3js.org/d3-collection.v1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/CSSRulePlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/MotionPathPlugin.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="container">
-    <h3 class="title">How Color Affects on the Resale</h3>
-    <svg id="map"></svg>
-    <svg id="chart"></svg>
+  <div class="margin-top">
+    <div class="flex-row space-between">
+      <div class="margin-left">
+        <h3 class="title">How Colors Affect on the Resale Values</h3>
+        <p class="smaller-body " style="color: #B2B2B2; max-width: 78%;">Yeezy is noted for its stripped-down, ready-to-wear style, which draws on signature earth tones and pastel highlights colors. 
+          Owing to the concept, some Yeezy fans argue that its colourways are deliberately similar or identifiable from one another.</p>
+      </div>
+      <div class="flex-row margin-xy no-action" id="buttons" >
+        <button class="button left-round small-body bold" id="redBtn">Trading Range</button>
+        <button class="button right-round small-body bold" id="blueBtn">Resale Volume</button>
+      </div>
+    </div>
+    <div id="toggleBtn" class="margin-left-sm">
+      <p id="circle-txt" class="smaller-body bold">Cluster</p>
+      <div id="circle-xs" class="toogleBG-default"></div>
+      <div id="circle-xl" class="toogleBG-default"></div>
+    </div>
   </div>
-  <!-- Custom JS -->
+  <div id="container"></div>
   <script src="/js/script.js"></script>
   <script src="/js/getColorCuster.js"></script>
 </body>
