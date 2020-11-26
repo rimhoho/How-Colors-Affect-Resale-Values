@@ -1,8 +1,36 @@
-body {min-height: 100vh; display: flex;justify-content: center;}
-svg {margin: 0; padding: 0; display: block;}
+body {min-height: 100vh;}
+svg, div {margin: 0; padding: 0; display: block;}
 
-.title {text-align: center; margin: 1.4em 0; font-weight: 300;}
-.bigger-body {font-weight: 700; font-size: 0.76rem; letter-spacing: -0.02em}
-.big-body {font-weight: 700; font-size: 0.7rem; letter-spacing: -0.03em; word-spacing: -0.16em; }
-.small-body {font-weight: 500; font-size: 0.57rem; letter-spacing: -0.02em}
-.smaller-body {font-weight: 300; font-size: 0.56rem; letter-spacing: -0.02em}
+.justify-end {display: flex; justify-content: flex-end;}
+.space-between {justify-content: space-between;}
+.flex-column {flex-direction:column;}
+.flex-row {display: flex; flex-direction:row;}
+
+.margin-top {margin-top: 2rem;}
+.margin-left {margin-left: 8.5rem;}
+.margin-xy {margin: 1rem 8.4rem 3rem 0; }
+.margin-left-sm {margin-left: 2rem;}
+
+.title {font-weight: 300;font-size: 1.4rem; margin: 0; line-height: 96%;}
+.thin-biggest-body {font-weight: 100; font-size: 1.4rem; letter-spacing: -0.02em}
+.bigger-body {font-weight: 700; font-size: 0.82rem; letter-spacing: -0.02em}
+.big-body {font-weight: 500; font-size: 0.8rem; letter-spacing: -0.03em; word-spacing: -0.16em;}
+.small-body {font-size: 0.66rem; letter-spacing: -0.02em; line-height: 96%;}
+.smaller-body {font-weight: 300; font-size: 0.6rem; letter-spacing: -0.02em;}
+.bold {font-weight: 700;}
+.light {font-weight: 100;}
+.left-round {border-top-left-radius: 0.4rem; border-bottom-left-radius: 0.4rem;}
+.right-round {border-top-right-radius: 0.4rem; border-bottom-right-radius: 0.4rem;}
+
+#circle-txt{position: absolute; top: 2.8rem; right: 5.1rem; cursor: pointer;}
+#circle-xs{width: 2.4rem; height: 2.4rem; position: absolute; top: 2.7rem; right: 4.9rem; border-radius: 10rem;  cursor: pointer;}
+#circle-xl{width: 3.4rem; height: 3.4rem; position: absolute; top: 2.2rem; right: 4.4rem; border-radius: 10rem;  cursor: pointer;}
+.toogleBG-default {background-color: rgba(51,51,51,.1); transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
+.toggleBG {background-color: rgba(51,51,51,.8); transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
+.toggleTxt {font-weight: 300; color: #efc100; z-index: 2;}
+
+.button {min-width: 4rem; border-style: solid; border-color: #b3b3b3; color: #333333; background-color: white; border-width: 0.02rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
+.redBtn {min-width: 4rem; border-style: solid; color:white; border-color: #f65e5d; background-color: #f65e5d; border-width: 0.01.4rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
+.blueBtn {min-width: 4rem; border-style: solid; color: white; border-color: #0382ed; background-color:#0382ed; border-width: 0.02rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
+
+.detail-info-thmnail {max-height: 12rem;}
