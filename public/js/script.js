@@ -11,7 +11,8 @@ const container = document.getElementById('container')
 const _svgNS = "http://www.w3.org/2000/svg";
 const _canvasWidth = Math.floor(window.innerWidth)
 const _canvasHeight = Math.floor(window.innerHeight)
-const clusterNames = {cluster0: 'Black', cluster1:'Grey+Blue', cluster2: 'Grey+Red', cluster3: 'Brown', cluster4: 'Yellow', cluster5: 'Neon', cluster6: 'Green+Yellow', cluster7: "White", cluster8: "White+Red", cluster9: "White+Blue", cluster10: "Blue", cluster11: "Orange"}
+const clusterNames = {cluster0: 'Black', cluster1:'Grey', cluster2: 'Grey+Brown', cluster3: 'Grey+Blue', cluster4: 'Yellow', cluster5: 'White', 
+                      cluster6: 'Grey+Pink', cluster7: "Orange", cluster8: 'Brown', cluster9:'Green', cluster10: 'Neon', cluster11: 'Blue'}
 const _margin = {gap: _canvasWidth * _onGetRatio(20, _canvasWidth, null), top: _canvasHeight * _onGetRatio(30, null, _canvasHeight), 
                  right: _canvasWidth * _onGetRatio(60, _canvasWidth, null), bottom: _canvasHeight * _onGetRatio(50, null, _canvasHeight), 
                  left: _canvasWidth * _onGetRatio(140, _canvasWidth, null), columnWidth: _canvasWidth * _onGetRatio(170, _canvasWidth, null)};
@@ -23,7 +24,7 @@ const _color = {mapLine: "#CCCCCC", mapBG: "#F5F5F5", cluster: "#efc100", premiu
 const _colorXScale = _canvasWidth - (_margin.left * 2) - _margin.right;
 const _colorYScale = _canvasHeight - _chart2.height - _margin.left; 
 let colorMapData = [], avgSumOfSold = 0;
-let flag4cluster = false, clusterYHolder = [];;
+let flag4cluster = true, clusterYHolder = [];;
 
 // READ DATA
 Promise.all([
@@ -59,7 +60,11 @@ Promise.all([
   // set color cluster map
   let clusterWidths = {};
   let clusterCount = 0, sumUpWidth = 0, sumUpGap = 0;
-  
+  let minAvgResalePrice = 200
+  let maxAvgResalePrice = 1000
+  let maxNumOfAsks = 200
+  let maxNumOfBids = 1000
+
   colorDistance.filter((obj, index) => {
     sumPrimaryDistance += obj.distance_primary;
     avgOfSold = Math.round(avgSumOfSold/stockX.length);
@@ -68,7 +73,11 @@ Promise.all([
         if (maxPrimaryD < Math.round(sumPrimaryDistance)) {maxPrimaryD = Math.round(sumPrimaryDistance)}
         maxTradingHigh = maxTradingHigh < d.trade_range_high ? d.trade_range_high : maxTradingHigh;
         maxSoldNum = maxSoldNum < d.number_of_sales ? d.number_of_sales : maxSoldNum
-
+        maxAvgResalePrice = d.trade_range_high > maxAvgResalePrice ? d.trade_range_high : maxAvgResalePrice
+        minAvgResalePrice = d.trade_range_low < minAvgResalePrice ? d.trade_range_low : minAvgResalePrice
+        maxNumOfAsks = d.number_of_Asks > maxNumOfAsks ? d.number_of_Asks : maxNumOfAsks
+        maxNumOfBids = d.number_of_Bids > maxNumOfBids ? d.number_of_Bids : maxNumOfBids
+        
         colorMapData.push({'range_category': d.category,
                            'shorten_title': d.shorten_title,
                            'title': obj.target,
@@ -101,15 +110,15 @@ Promise.all([
         const widthRatio = clusterCount > 12 ? _canvasWidth * _onGetRatio(80, _canvasWidth, null) : _canvasWidth * _onGetRatio(80, _canvasWidth, null)
         if (comparisonC != obj.cluster) {
           const gapValue = (index != 0) ? obj.distance_primary : 0
+          clusterWidths[comparisonC] = {'count': clusterCount, 'width': widthRatio, 'sumUpWidth': sumUpWidth, 'gap': gapValue, 'sumUpGap': sumUpGap}
           sumUpGap += gapValue
           sumUpWidth += widthRatio
-          clusterWidths[comparisonC] = {'count': clusterCount, 'width': widthRatio, 'sumUpWidth': sumUpWidth, 'gap': gapValue, 'sumUpGap': sumUpGap}
           clusterCount = 1;
         } else {
           clusterCount++
         }
         if (index == colorDistance.length - 1) {
-          clusterWidths[obj.cluster] = {'count': clusterCount, 'width': widthRatio, 'sumUpWidth': sumUpWidth, 'gap':  obj.distance_primary, 'sumUpGap': sumUpGap}
+          clusterWidths[obj.cluster] = {'count': clusterCount, 'width': widthRatio, 'sumUpWidth': sumUpWidth + widthRatio, 'gap': obj.distance_primary, 'sumUpGap': sumUpGap}
         }
       }
     })
@@ -171,7 +180,7 @@ Promise.all([
           if (id != null) text.setAttribute('id', id);
           if (classes != null) text.setAttribute('class', classes);
           if (textAnchor != null) text.setAttribute('text-anchor', textAnchor);
-          if (textAnchor != null) text.setAttribute('dominant-baseline', dominantBaseline)
+          if (dominantBaseline != null) text.setAttribute('dominant-baseline', dominantBaseline)
           if (color != null) text.setAttribute('fill', color);
           if (textContent != null) text.textContent = textContent;
     return text
@@ -206,6 +215,76 @@ Promise.all([
     }
   }
 
+  // create body title text wraping with max value within tspan
+  function _createTitleNBodyTxt(target, bodyTitleContext, bodyContext, maxLength, textAnchor, classes, textColor) {
+    const bodyTitleGroup = _createStackedText(_margin.left, _margin.top, bodyTitleContext, textAnchor, classes, textColor)
+    // bodytext
+    let count4wrap = 0;
+    const bodyText = _createText(0, 0, id = null, 'xAxisLabel', textAnchor, dominantBaseline = null, textColor, textContent = null) 
+          bodyText.setAttribute('x', 0)
+          bodyText.setAttribute('y', 0)
+    for (var i = 0; i < 11; i++) {
+      const startY = (i == 0) ? _chart2.bigger_gap * 1.4 : _chart2.sm_gap
+      const bodyTspan = _createTspan(_margin.left * 2, startY, 'bodyTspan' ,'small-body', 'start', textColor, '')
+      bodyText.appendChild(bodyTspan)
+      if (i == 0) {
+        bodyTitleGroup.appendChild(bodyText)
+        target.appendChild(bodyTitleGroup)
+      } 
+    }
+    _wrapText2Tspan(bodyText.childNodes, maxLength, bodyContext, count4wrap, textColor)
+    return target
+  }
+  function _createBodyNLegend(target, typeFeature) {
+    // title text
+    const bodyTitleContext = typeFeature == 'tradingRange' ? ['Black has the', 'highest premium.', 'Grey+Blue is next.'] : ['Black is sold', 'the most.', 'Grey is next.']
+    const bodySubTitleContext = typeFeature == 'tradingRange' ? 'white + Blue, Tultledove (2015). White , Static (2018). Black, Core Black Red (2016)' : 'Sold'
+    _createTitleNBodyTxt(target, bodyTitleContext, bodySubTitleContext, _canvasWidth /2, textAnchor = null, "bigger-body", _color.text)
+    // legend
+    const LTitle = typeFeature == 'tradingRange' ? 'Trading Range' : 'Resale Volume'
+    const LSubTitle = '(12 Mos.)'
+    const LPrimaryFeature = typeFeature == 'tradingRange' ? 'Price Premium' : 'Number of sales'
+    const LSecondaryFeature = typeFeature == 'tradingRange' ? 'Manufacturer Suggested Retail Price' : null
+    const LColor = typeFeature == 'tradingRange' ? [_color.premiumPrice, _color.msrp] : [_color.resaleVolume]
+    const legendG = _createLegend(LTitle, LSubTitle, LPrimaryFeature, LSecondaryFeature, LColor)
+          legendG.setAttribute('display', 'none')
+          target.appendChild(legendG)
+    return
+  }
+  function _createStackedText(x, y, context, textAnchor, classes, textColor, i) {
+    const bodyTGroup = document.createElementNS(_svgNS, 'g');
+          bodyTGroup.setAttribute('class', 'title-context');
+    if (typeof context != 'string') {
+      for (var m = 0; m < context.length; m++) {
+        if (typeof i == 'object' && context[m] != '') {  // ('detail-infos') - Title
+        if (m == 1) y = y + (m * _chart2.big_gap)
+        else if (m == 3) y = y - 3
+        else  y = y + (m * _chart2.smst_gap * 1.2)
+        const textClas = m == 0 || m == 1 ? "bigger-body" : "small-body"
+        const textCol = m == 0 || m == 1 ? "white" : _color.greyText
+        const bodyTitle = _createText(x, y, id = null, textClas, textAnchor, dominantBaseline = null, textCol, context[m])
+              bodyTGroup.appendChild(bodyTitle)
+        } else if (i == 1 && m == 1 || i == 2 && m == 1 || i == 3 && m == 1) { // ('detail-infos') - Big thin Number
+          const newx = i == 2 ? (_margin.gap * 0.6) : x
+          const bodyTitle = _createText(newx, y + (_chart2.big_gap * 2), id = null, "thin-biggest-body", textAnchor, dominantBaseline = null, "white", context[m])
+                bodyTGroup.appendChild(bodyTitle)
+        } else if (typeof i == 'undefined') { // ('sneakersMap) -Title
+          y = m == 1 ? y + (m * _chart2.big_gap) : y + (m * _chart2.smst_gap * 1.104)
+          const bodyBody = _createText(x, y, id = null, classes, textAnchor, dominantBaseline = null, textColor, context[m])
+                bodyTGroup.appendChild(bodyBody)
+        } else {
+          // console.log(i, m, context[m])
+          const newGap = m == 3 || m == 5 ? m * _margin.top * 1.1 : m * _margin.top * 1.05  
+          const bodyBody = _createText(x, y + newGap, id = null, "small-body", textAnchor, dominantBaseline = null, textColor, context[m])
+              bodyTGroup.appendChild(bodyBody)
+        }
+      }
+    } else {
+      const bodyBody = _createText(x, y + (_margin.top * 0.93), id = null, "small-body", textAnchor, dominantBaseline = null, textColor, context)
+            bodyTGroup.appendChild(bodyBody)
+    }
+    return bodyTGroup
+  }
   // create bar charts and the inner elements (legend, yAxis)
   function _createYAxis(maxValue, interval, yScalText, typeFeature) {
     let yAxisColor, startText, description;
@@ -245,7 +324,7 @@ Promise.all([
 
     const legendG = document.createElementNS(_svgNS, 'g');
           legendG.setAttribute('id', 'legend')
-    const legendBG = _createRect(0, 0, id = null, classes = null, bgW, bgH, "rgba(255, 255, 255, 0.8)")
+    const legendBG = _createRect(0, 0, id = null, classes = null, bgW, bgH, "rgba(255, 255, 255, 0.88)")
           legendG.appendChild(legendBG)
     const textEl = _createText(0, 0, id = null, 'legendText', textAnchor = null, dominantBaseline = null, color = null, textContent = null)
     const tspan1El1 = _createTspan(bgW - _margin.gap/2, _chart2.bigger_gap, id = null, 'small-body bold', 'end', _color.text, title)
@@ -336,19 +415,21 @@ Promise.all([
     const bgGroup = document.createElementNS(_svgNS, 'g');
           bgGroup.setAttribute('id', 'bgGroup');
           clusterGroup.appendChild(bgGroup)
-    
+    // console.log(clusterWidths)
     const clusterD = Object.values(clusterWidths)
     Object.keys(clusterWidths).forEach((key, i) => {
       // create basic elements - bar, Bg, description texts
-      const maxValue4MaxScale =clusterWidths['cluster11'].sumUpGap + clusterWidths['cluster11'].sumUpWidth
-      const xScaledSumGap = i != 0 ? _colorXScale * clusterD[i - 1].sumUpGap / maxValue4MaxScale :_colorXScale * clusterD[i].sumUpGap / maxValue4MaxScale
-      const xScaledSumWidth = i != 0 ? _colorXScale * clusterD[i - 1].sumUpWidth / maxValue4MaxScale :_colorXScale * clusterD[i].sumUpWidth / maxValue4MaxScale
-      const clusterX = i == 0 ? _margin.left : _margin.left + xScaledSumGap + xScaledSumWidth - (_margin.right/2)
+      const maxValue4MaxScale = clusterWidths[`cluster${Object.keys(clusterWidths).length-1}`].sumUpGap + clusterWidths[`cluster${Object.keys(clusterWidths).length-1}`].sumUpWidth
+      const xScaledGap = _colorXScale * clusterD[i].gap / maxValue4MaxScale
+      const xScaledSumGap = _colorXScale * clusterD[i].sumUpGap / maxValue4MaxScale
       const xScaledWidth = _colorXScale * clusterD[i].width / maxValue4MaxScale
-      const clusterHeight = i > 9 || i == 2 || i == 3 || i == 5 ? clusterD[i].count * _chart2.big_gap * 0.88 : clusterD[i].count * _chart2.smst_gap
-      const clusterX4Tooltip = i < 9 ? clusterX + xScaledWidth : clusterX + xScaledWidth + (_colorXScale * clusterD[i].gap / maxValue4MaxScale/2)
-      const clusteY =  _canvasHeight * 0.2 - _margin.top - clusterHeight
-      const clusterBarColor = typeFeature == 'colorCluster' ? "rgba(51,51,51,0.9)" : "rgba(220,220,220,0.6)";
+      const xScaledSumWidth = _colorXScale * clusterD[i].sumUpWidth / maxValue4MaxScale
+      const clusterX = _margin.left + xScaledSumGap + xScaledSumWidth
+      const clusterHeight = i == 0 || i > 2 && i < 6? clusterD[i].count * _chart2.smst_gap * 0.84 : clusterD[i].count * _chart2.big_gap
+      const clusterX4Tooltip = i == Object.keys(clusterWidths).length-2 ? clusterX + xScaledWidth + xScaledGap : clusterX + xScaledWidth + (xScaledGap/2) - (_canvasWidth * _onGetRatio(20, _canvasWidth, null))
+
+      const clusteY = _canvasHeight * 0.2 - _margin.top - clusterHeight
+      const clusterBarColor = typeFeature == 'colorCluster' ? "rgba(51,51,51,0.78)" : "rgba(220,220,220,0.6)";
       const clusterBarRect = _createRect(clusterX, clusteY, id = null, "cluster-bar", clusterD[i].width, clusterHeight, clusterBarColor)
             clusterBarRect.setAttribute('rx', _canvasWidth * _onGetRatio(4, _canvasWidth, null))
             clusterBarRect.setAttribute('ry', _canvasWidth * _onGetRatio(4, _canvasWidth, null))
@@ -378,16 +459,7 @@ Promise.all([
       }
       if (typeFeature == 'colorCluster') {
         // add sneakers bar-bg
-        let clusterBarheight = 0;
-        if (clusterD[i].count < 7 && clusterD[i].count >= 4) {
-          clusterBarheight = clusterD[i].count * _canvasHeight * _onGetRatio(51.2, null, _canvasHeight)
-        } else if (clusterD[i].count < 4 && clusterD[i].count > 1) {
-          clusterBarheight = clusterD[i].count * _canvasHeight * _onGetRatio(56, null, _canvasHeight)
-        } else if (clusterD[i].count < 2) {
-          clusterBarheight = clusterD[i].count * _canvasHeight * _onGetRatio(74, null, _canvasHeight)
-        } else {
-          clusterBarheight = clusterD[i].count * _canvasHeight * _onGetRatio(48.2, null, _canvasHeight)
-        }
+        const clusterBarheight = (clusterD[i].count * _margin.top) + (clusterD[i].count + 2) * _chart2.big_gap;
         const clusterSneakersBar = _createRect(clusterX, _canvasHeight * 0.2 - _margin.top, id = null, "sneakers-bar", clusterD[i].width, clusterBarheight, _color.mapBG)
               clusterSneakersBar.setAttribute('rx', _canvasWidth * _onGetRatio(4, _canvasWidth, null))
               clusterSneakersBar.setAttribute('ry', _canvasWidth * _onGetRatio(4, _canvasWidth, null)) 
@@ -410,7 +482,7 @@ Promise.all([
                   clusterImgGroup.appendChild(sec1Img);
                   gsap.from(sec1Img, {delay: 0.24, duration: 0.9, y: -imageY + _chart2.height, ease: "back.out(1.7)", stagger: {from: 0, amount: 0.4}});
             //  add tooltip among cluster 
-            const clusterTootipImg1 = _createImage(clusterX - _margin.gap, imageY, id = null, classes = null, `img/tooltip_right.svg`, _canvasWidth * _onGetRatio(34, _canvasWidth, null), height = null)
+            const clusterTootipImg1 = _createImage(clusterX - _margin.gap, imageY, id = null, "tooltip-right", `img/tooltip_right.svg`, _canvasWidth * _onGetRatio(34, _canvasWidth, null), height = null)
                   if (countColor != 1) clusterTooltipG.appendChild(clusterTootipImg1);
             const clustertxt2 = _createText(clusterX - (_chart2.smst_gap * .5), imageY + (_chart2.smst_gap * .5), id = null, 'small-body', 'middle', 'hanging', _color.text, d.absolute_primary) 
                   if (countColor != 1) clusterTooltipG.appendChild(clustertxt2);
@@ -418,8 +490,8 @@ Promise.all([
                   gsap.from(clustertxt2, {delay: 1.6, opacity: 0, duration:3, ease: "power4.out", stagger: {from: 0, amount: 0.4}});
           }
         })
-        if (i != 11) { // bar count : 12, gap count: 11 (so don't count the last one for gap spacing)
-          const clusterTootipImg2 = _createImage(clusterX4Tooltip, _canvasHeight * 0.2 - (_margin.top * 0.8), id = null, classes = null, `img/tooltip.svg`, _canvasWidth * _onGetRatio(40, _canvasWidth, null), height = null)
+        if (i != Object.keys(clusterWidths).length-1) { // bar count : 12, gap count: 11 (so don't count the last one for gap spacing)
+          const clusterTootipImg2 = _createImage(clusterX4Tooltip, _canvasHeight * 0.2 - (_margin.top * 0.8), id = null, "tooltip", `img/tooltip.svg`, _canvasWidth * _onGetRatio(40, _canvasWidth, null), height = null)
                 clusterTooltipG.appendChild(clusterTootipImg2);
           const clustertxt1 = _createText(clusterX4Tooltip + _margin.gap, _canvasHeight * 0.2 - (_margin.top * 0.5), id = null, 'small-body bold', 'middle', 'hanging', color = null, textContent = clusterD[i].gap) 
                 clusterTooltipG.appendChild(clustertxt1);
@@ -475,6 +547,8 @@ Promise.all([
 
     sneakersGroup.lastChild.setAttribute('x', -_chart2.smer_gap) // image
     sneakersGroup.lastChild.setAttribute('y', soldH - (_chart2.smer_gap * 0.4))
+    sneakersGroup.lastChild.setAttribute('id', `resale_${title}`)
+    sneakersGroup.lastChild.setAttribute('class', 'below-sneakers-img')
     if (title != null) sneakersGroup.lastChild.setAttribute('href', `img/${title}.png`)
     sneakersGroup.lastChild.setAttribute('width', barW * 2)
   }
@@ -531,6 +605,7 @@ Promise.all([
 
     sneakersGroup.lastChild.setAttribute('x', _chart2.smer_gap * -0.4) // image
     sneakersGroup.lastChild.setAttribute('y', premiumH - (_chart2.smer_gap * 0.4))
+    sneakersGroup.lastChild.setAttribute('id', `premium_${title}`)
     sneakersGroup.lastChild.setAttribute('class', 'below-sneakers-img')
     if (title != null) sneakersGroup.lastChild.setAttribute('href', `img/${title}.png`)
     sneakersGroup.lastChild.setAttribute('width', barW * 2)
@@ -661,112 +736,6 @@ Promise.all([
       e.target.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.setAttribute('y', -10)
     }
   }
-  function _createStackedText(x, y, bodyTitleContext, textAnchor, classes, textColor, i, widthby3) {
-    const bodyTGroup = document.createElementNS(_svgNS, 'g');
-          bodyTGroup.setAttribute('class', 'title-context');
-          bodyTGroup.setAttribute('transform', `translate(${x}, 0)`);
-    for (var m = 0; m < bodyTitleContext.length; m++) {
-      let textContexts = bodyTitleContext[m];
-      let newXTxt = 0
-      if (i==0 && m== 1 || i==1 && m== 1 || i==2 && m== 1) {
-        // console.log(m, i, bodyTitleContext[m])
-        const nx = i == 1 ? _margin.gap * 0.6 : 0
-        const bodyBigTitle = _createText(nx, y + (m * _chart2.bigger_gap * 1.2), id = null, "thin-biggest-body", "start", dominantBaseline = null, textColor, bodyTitleContext[m])
-              bodyTGroup.appendChild(bodyBigTitle)
-      } else if (i==0 && m== 2 || i==1 && m== 2 || i==2 && m== 2) {
-        const body1stSubTitle = _createText(0, y + (m * _chart2.big_gap * 1.8), id = null, classes, "start", dominantBaseline = null, _color.greyText, bodyTitleContext[m])
-        bodyTGroup.appendChild(body1stSubTitle)
-      } else {
-        let newYTxt;
-        if (typeof i == "object" && m == 1) {
-          newYTxt = y + (m * _chart2.sm_gap)
-          textColor = _color.greyText
-        } else if (typeof i == "undefined" && m == 1 || typeof i == "undefined" && m == 2) {
-          newYTxt = y + (m * _chart2.big_gap)
-          textColor = _color.text
-        } else if (typeof i == "undefined" && m == 0) {
-          newYTxt = y + (m * _chart2.big_gap * 2)
-          textColor = _color.text
-        } else if (i == 1 && m == 4 || i == 2 && m == 4) {
-          textAnchor = 'start'
-          newYTxt = y + (m * _chart2.big_gap * 1.9)
-          textColor = _color.greyText
-        } else if (typeof bodyTitleContext[m] == "object") {
-          bodyTitleContext[m].forEach((item, index) => {
-            textContexts = item
-            if (i == 1 && m == 0 || i == 0 && index == 0) {
-              newYTxt = y + (m * _chart2.big_gap * 1.9);
-              newXTxt = (index == 1) ? widthby3 : 0
-              textAnchor = index == 1 && "end"
-            } else {
-              if (index == 2 || i == 2 && index == 1 || m == 5 && index == 1) {
-                // console.log(i, typeof item, item, m, index)
-                newYTxt = y + (m * _chart2.big_gap * 2); 
-                newXTxt = widthby3
-                textAnchor = "end"
-              } else if (m == 3 && index == 0) {
-                // console.log(i, typeof item, item, m, index)
-                newYTxt = y + (m * _chart2.big_gap * 2)
-                newXTxt = _margin.right * 0.4;
-              } else {
-                // console.log(i, typeof item, item, m, index)
-                textColor = "white"
-                newYTxt = y + (m * _chart2.big_gap * 2)
-                newXTxt = _margin.right
-                textAnchor = "end"
-              }
-            }
-            const bodyTitle = _createText(newXTxt, newYTxt, id = null, classes, textAnchor, dominantBaseline = null, textColor, textContexts)
-                  bodyTGroup.appendChild(bodyTitle)
-          })
-        } else {
-          textColor = typeof i == "object" ? _color.greyText : "white"
-          newYTxt = y + (m * _chart2.big_gap * 2)
-        }
-        const bodyTitle = _createText(newXTxt, newYTxt, id = null, classes, textAnchor, dominantBaseline = null, textColor, textContexts)
-        if (textAnchor != null) bodyTitle.setAttribute('text-anchor', textAnchor);
-        bodyTGroup.appendChild(bodyTitle)
-      }
-    }
-    return bodyTGroup
-  }
-  // create body title text wraping with max value within tspan
-  function _createTitleNBodyTxt(target, bodyTitleContext, bodyContext, maxLength, textAnchor, classes, textColor) {
-    const bodyTitleGroup = _createStackedText(_margin.left, _margin.top, bodyTitleContext, textAnchor, classes, textColor)
-    // bodytext
-    let count4wrap = 0;
-    const bodyText = _createText(0, 0, id = null, 'xAxisLabel', textAnchor, dominantBaseline = null, textColor, textContent = null) 
-          bodyText.setAttribute('x', 0)
-          bodyText.setAttribute('y', 0)
-    for (var i = 0; i < 11; i++) {
-      const startY = (i == 0) ? _chart2.bigger_gap * 1.4 : _chart2.sm_gap
-      const bodyTspan = _createTspan(_margin.left * 2.2, startY, 'bodyTspan' ,'small-body', 'start', textColor, '')
-      bodyText.appendChild(bodyTspan)
-      if (i == 0) {
-        bodyTitleGroup.appendChild(bodyText)
-        target.appendChild(bodyTitleGroup)
-      } 
-    }
-    _wrapText2Tspan(bodyText.childNodes, maxLength, bodyContext, count4wrap, textColor)
-    return target
-  }
-  
-  function _createBodyNLegend(target, typeFeature) {
-    // title text
-    const bodyTitleContext = typeFeature == 'tradingRange' ? ['White+Blue has', 'highest price.', 'White is next.'] : ['Black is sold', 'the most.', 'White is next.']
-    const bodySubTitleContext = typeFeature == 'tradingRange' ? 'white + Blue, Tultledove (2015). White , Static (2018). Black, Core Black Red (2016)' : 'Sold'
-    _createTitleNBodyTxt(target, bodyTitleContext, bodySubTitleContext, _canvasWidth /2, textAnchor = null, "bigger-body", _color.text)
-    // legend
-    const LTitle = typeFeature == 'tradingRange' ? 'Trading Range' : 'Resale Volume'
-    const LSubTitle = '(12 Mos.)'
-    const LPrimaryFeature = typeFeature == 'tradingRange' ? 'Price Premium' : 'Number of sales'
-    const LSecondaryFeature = typeFeature == 'tradingRange' ? 'Manufacturer Suggested Retail Price' : null
-    const LColor = typeFeature == 'tradingRange' ? [_color.premiumPrice, _color.msrp] : [_color.resaleVolume]
-    const legendG = _createLegend(LTitle, LSubTitle, LPrimaryFeature, LSecondaryFeature, LColor)
-          legendG.setAttribute('display', 'none')
-          target.appendChild(legendG)
-    return
-  }
 
   // call initial main map + below chart
   function _OnInitColorCluster(sec0Svg, typeFeature) {
@@ -781,8 +750,8 @@ Promise.all([
     const sec0Rect = _createRect(0, 0, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.2 - _margin.top, _color.cluster)
           sec0Svg.appendChild(sec0Rect);   
     // add body & title
-    const bodyTitleContext = ['The Color Distance', 'By Euclidean distance']
-    const bodyContext = 'As most definitions of color difference are distances within a color space, the standard means of determining distances is the Euclidean distance. If one presently has an RGB (Red, Green, Blue) tuple and wishes to find the color difference, computationally one of the easiest is to consider R, G, B linear dimensions defining the color space.'//'The Color Distance between surrounding sneakers'
+    const bodyTitleContext = ['The Color Distance', 'By Euclidean', 'distance (Delta E)']
+    const bodyContext = 'As most definitions of color difference are distances within a color space, the standard means of determining distances is the Euclidean distance. If one presently has an RGB (Red, Green, Blue) tuple and wishes to find the color difference, computationally one of the easiest is to consider R, G, B linear dimensions defining the color space. Delta-E (dE) is a single number that represents the "distance" between two colors in Lab.'//'The Color Distance between surrounding sneakers'
     _createTitleNBodyTxt(sec0Svg, bodyTitleContext, bodyContext,_chart2.width/1.7, textAnchor = null, "bigger-body", _color.text)
     // legend
     const clusterLegendG = _createLegend('Standard Perception Ranges', LSubTitle = null, LPrimaryFeature = null, LSecondaryFeature = null, "rgba(51,51,51,0.9)")
@@ -820,9 +789,10 @@ Promise.all([
           destGroup1.setAttribute('height', _canvasHeight * 0.2/2);
     const imageTag1 = _createImage(_canvasWidth - (_margin.left * 1.66), _canvasHeight * 0.2/2.4, id = null, classes = null, 'img/mouse_hover.svg', _chart2.bigger_gap * 1.8, height = null)
           destGroup1.appendChild(imageTag1);
+          gsap.to(imageTag1, {duration: 1, scaleX:0.92, scaleY:0.92, force3D:true, yoyo:true, repeat:-1, ease: "power1.inOut"});
     for (var j = 0; j < 2; j++) {
-      const text4desc1 = j == 0 ? 'Hover to see' : 'more details below.'
-      const hovorText1 = _createText(_canvasWidth - (_margin.left * 1.44), _canvasHeight * 0.2 - (_margin.bottom * 1.9) + (j * _chart2.smer_gap), id = null, 'small-body', 'middle', dominantBaseline = null, _color.premiumPrice, text4desc1)
+      const text4desc1 = j == 0 ? 'Hover to show' : 'the Bar Chart'
+      const hovorText1 = _createText(_canvasWidth - (_margin.left * 1.44), _canvasHeight * 0.2 - (_margin.bottom * 1.9) + (j * _chart2.sm_gap), id = null, 'small-body', 'middle', dominantBaseline = null, _color.premiumPrice, text4desc1)
             destGroup1.appendChild(hovorText1);
     }
     mainSVG.appendChild(destGroup1)
@@ -835,12 +805,14 @@ Promise.all([
           descGroup2.setAttribute('display', 'none')
     const imageTag2 = _createImage(_canvasWidth - (_margin.left * 1.66), _canvasHeight * 0.2/2.4, id = null, classes = null, 'img/mouse_click.svg', _chart2.bigger_gap * 1.8, height = null)
           descGroup2.appendChild(imageTag2);
+          gsap.to(imageTag2, {duration: 1, scaleX:0.92, scaleY:0.92, force3D:true, yoyo:true, repeat:-1, ease: "power1.inOut"});
     for (var j = 0; j < 2; j++) {
-      const text4desc2 = j == 0 ? 'Click to Pause' : ' the Map & Sneakers'
-      const hovorText2 = _createText(_canvasWidth - (_margin.left * 1.44), _canvasHeight * 0.2 - (_margin.bottom * 1.9) + (j * _chart2.smer_gap), id = null, 'small-body', 'middle', dominantBaseline = null, _color.premiumPrice, text4desc2)
+      const text4desc2 = j == 0 ? 'Click Sneakers' : 'for more Detail Below'
+      const hovorText2 = _createText(_canvasWidth - (_margin.left * 1.44), _canvasHeight * 0.2 - (_margin.bottom * 1.9) + (j * _chart2.sm_gap), id = null, 'small-body', 'middle', dominantBaseline = null, _color.premiumPrice, text4desc2)
       descGroup2.appendChild(hovorText2)
     }
     mainSVG.appendChild(descGroup2)
+    
     // major navigation
     const sec0Rect3 = _createRect(0, _canvasHeight * 0.2 - _canvasHeight * _onGetRatio(220, null, _canvasHeight), 'display-none', classes = null,_canvasWidth, _canvasHeight * _onGetRatio(270, null, _canvasHeight), 'rgba(255, 255, 10, 0)')
           mainSVG.appendChild(sec0G);
@@ -897,72 +869,117 @@ Promise.all([
     return
   }
   function _onInitDetailInfos(target) {
-    const bottomDetail = document.getElementsByTagName('detail-infos')
+    const titleId = target.id.split('_')[1]
+    const bottomDetail = document.getElementById('detail-infos')
     const detailInfos = document.createElementNS(_svgNS, 'g')
+          detailInfos.setAttribute('id', 'detail-chart')
           detailInfos.setAttribute('transform', `translate(${0}, ${_canvasHeight * 0.46})`);
-    const sec1Rect = _createRect(_margin.left, 0, 'mapBG', classes = null, _canvasWidth - (_margin.left * 2),  _canvasHeight * 0.2 - _margin.bottom, _color.text)
+    const sec1Rect = _createRect(_margin.left, 0, 'detail-BG', classes = null, _canvasWidth - (_margin.left * 2),  _canvasHeight * 0.224 - _margin.bottom, _color.text)
+          sec1Rect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
+          sec1Rect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
           detailInfos.appendChild(sec1Rect);
-    // add title, release date, cluster
-    const widthby3 = (_canvasWidth - (_margin.left * 2))/4 - (_margin.gap * 1.8)
-    const bodyTitleContext = '350 Turtledove'
-    const bodyContext = ['Jun 27 2015', clusterNames['cluster9']]
-    const arrowSymbol = 'arrow_up' // 'arrow_down'
-    const detailTitle = _createText(_margin.left + (_margin.gap ), _margin.top * 1.2, id = null, "big-body", textAnchor = null, "hanging", "white", bodyTitleContext)
-    const detailSubTitle = _createStackedText(_margin.left + widthby3 + (_margin.gap), _margin.top * 1.2, bodyContext, "end", "smaller-body", _color.greyText, i = null, widthby3)
-    const detailThmnail = _createImage(_margin.left + (_margin.gap * 2), _margin.top * 1.6, id = null, "detail-info-thmnail", `img/${bodyTitleContext}.png`, widthby3 * 0.88,  _canvasHeight * _onGetRatio(160, null, _canvasHeight))
-    for (var i = 0; i < 3; i++) {
-      let textsContext; 
-      if (i == 0) {
-        textsContext = ['Color Difference', '128.55', 'Delta E', ['0','128.55','100']] // in Base & Highlight
-      } else if (i == 1) {
-        textsContext = [['Price Premium', 'MSRP: $220'], '722.5%', 'Avg. Resale Price', ['$200', '$1,390', '$1,645'], 'Trading Range', ['$800', '$1,444','$1,846']] //,'$1,645' ,'$1,846'
-      } else {
-        textsContext = ['Resale Volume', '204', 'Number of Asks', ['62', '5,649'], 'Number of Bids', ['81', '1,125']] 
-      }
-      const secRectGroup = document.createElementNS(_svgNS, 'g')
-            secRectGroup.setAttribute('id', `info-bar-group_${i}`)
-            secRectGroup.setAttribute('transform', `translate(${(widthby3 * 0.91 + (_margin.gap * 2)) * (1 + i)}, ${_margin.top})`);
-      const secStackedText = _createStackedText(_margin.left + (_margin.gap * 2), 0, textsContext, "start", "smaller-body", "white", i, widthby3)
-            secRectGroup.appendChild(secStackedText)
-      const secBar1BGChart = _createRect(_margin.left + (_margin.gap * 2), (_canvasHeight * 0.2 - _margin.bottom) * 0.32, id = null, "detail-info-bar-chart", widthby3, _chart2.sm_gap, _color.chartBG)
-            secRectGroup.appendChild(secBar1BGChart)
-      const secBar1GreyRect = _createRect(_margin.left + (_margin.gap * 2), (_canvasHeight * 0.2 - _margin.bottom) * 0.32, id = null, "detail-info-bar-chart", _margin.right*0.4, _chart2.sm_gap, _color.msrp)
-            secRectGroup.appendChild(secBar1GreyRect)
-      const detailSymbol = _createImage(_margin.left + (_margin.gap * 2), _chart2.smer_gap, id = null, "detail-info-arrow", `img/${arrowSymbol}.svg`, _chart2.smst_gap, height = null)
-            if (i == 1) secRectGroup.appendChild(detailSymbol)
-      const secColorImgGroup = document.createElementNS(_svgNS, 'g')
-            secColorImgGroup.setAttribute('transform', `translate(${(widthby3 * 0.91 + (_margin.gap * 2))}, ${(_canvasHeight * 0.197 - _margin.bottom) * 0.5})`);
-      if (i == 0) {
-        for (var n = 0; n < 2; n++) {
-          const rectColor = n == 0 ? "#908F8A" : "#454442"
-          const rectText = n == 0 ? "Base" : "Highlight"
-          const secHighlightImg = _createImage(_margin.left + (_margin.gap * 2), _margin.top, id = null, 'detail-info-img-base-highlight-color', `img/color_shade/${bodyTitleContext}_code.png`, width = null,  _canvasHeight * _onGetRatio(61, null, _canvasHeight))
-                secColorImgGroup.appendChild(secHighlightImg)
-          const rectHighlightChart = _createRect(_margin.left + (_margin.gap * 3) + (widthby3/2), _margin.top + (_margin.top * n), id = null, "detail-info-color-rect", widthby3 * 0.42, _canvasHeight * _onGetRatio(30, null, _canvasHeight), rectColor)
-                secColorImgGroup.appendChild(rectHighlightChart)
-          const rectBarText = _createText(_margin.left + (_margin.gap * 3) + (widthby3 * 0.7), (_margin.top * 1.28) + (_margin.top * n), id = null, "smaller-body", "middle", "hanging", "white", rectText)
-                secColorImgGroup.appendChild(rectBarText)
-        } 
-      } else {
-        const secBar2BGChart = _createRect(_margin.left + (_margin.gap * 2), (_canvasHeight * 0.2 - _margin.bottom) * 0.62, id = null, "detail-info-bar-chart", widthby3, _chart2.sm_gap, _color.chartBG)
-              secRectGroup.appendChild(secBar2BGChart)
-        const secBar2GreyChart = _createRect(_margin.left + (_margin.gap * 2), (_canvasHeight * 0.2 - _margin.bottom) * 0.62, id = null, "detail-info-bar-chart", _margin.right, _chart2.sm_gap, _color.msrp)
-              if (i == 2) secRectGroup.appendChild(secBar2GreyChart)
-        if (i == 1){
-          for (var m = 0; m < 2; m++) {
-            const secPremiumChart = _createRect(_margin.left + (_margin.gap * 4), (_canvasHeight * 0.2 - _margin.bottom) * 0.32 + (m * 2.16 * _margin.top), id = null, "detail-info-bar-chart", _margin.right * 0.7, _chart2.sm_gap, _color.premiumPrice)
-                  secRectGroup.appendChild(secPremiumChart)
+          console.log(sec1Rect)
+    const widthby3 = ((_canvasWidth - (_margin.left * 2)) - (_margin.gap * 10))/4 > _canvasWidth * _onGetRatio(176, _canvasWidth, null) ? ((_canvasWidth - (_margin.left * 2)) - (_margin.gap * 10))/4 : _canvasWidth * _onGetRatio(176, _canvasWidth, null)
+    let leftYTxt, rightYTxt, middleTxt, collectText;
+
+    colorMapData.forEach((d, i) => {
+      if (titleId == d.title) {
+        for (var i = 0; i < 4; i++) {
+          // grouping four column
+          const groupX = i == 0 ? _margin.left + (_margin.gap * 1.4) : _margin.left + (_margin.gap * 2.6 * i) + (widthby3 * i)
+          const secRectGroup = document.createElementNS(_svgNS, 'g')
+                secRectGroup.setAttribute('id', `info-bar-group_${i}`)
+                secRectGroup.setAttribute('transform', `translate(${groupX}, ${_margin.top * 1.4})`);
+                
+          if (i == 0) {
+            leftYTxt = [d.range_category, d.shorten_title, clusterNames[d.range_cluster]]
+            rightYTxt = ['', '', '', d.release_date]
+            const stackedTxtLeft = _createStackedText(0, 0, leftYTxt, "start", "big-body", "white", i = null)
+            const stackedTxtRight = _createStackedText(widthby3, 0, rightYTxt, "end", "small-body", _color.greyText, i = null)
+            const detailThmnail = _createImage(0, _chart2.sm_gap, id = null, "detail-info-thmnail", `img/${d.title}.png`, widthby3,  _canvasHeight * _onGetRatio(160, null, _canvasHeight))
+                  secRectGroup.appendChild(stackedTxtLeft)
+                  secRectGroup.appendChild(stackedTxtRight)
+                  secRectGroup.appendChild(detailThmnail)
+          } else if (i == 1) {
+            leftYTxt = ['Color Difference', d.absolute_highlight, 'Delta E', '0'] // 
+            rightYTxt = ['Base & Highlight', '', '', '100']
+            middleTxt = ['', '', '', d.absolute_highlight]
+            bar1Width = widthby3 * d.absolute_highlight / 100
+            const secLetfText = _createStackedText(0, 0, leftYTxt, "start", "small-body", _color.greyText, i)
+                  secRectGroup.appendChild(secLetfText)
+            const secRightText = _createStackedText(widthby3, 0, rightYTxt, "end", "small-body", _color.greyText, i)
+                  secRectGroup.appendChild(secRightText)
+            const secMddText = _createStackedText(bar1Width, 0, middleTxt, "start", "small-body", _color.cluster, i)
+                  secRectGroup.appendChild(secMddText)
+            const secBar1BGChart = _createRect(0, _margin.bottom + (_margin.top * 0.7), id = null, "detail-info-bar-bg", widthby3, _chart2.big_gap, _color.chartBG)
+                  secRectGroup.appendChild(secBar1BGChart)
+            const secBar1Rect = _createRect(0, _margin.bottom + (_margin.top * 0.7), id = null, "detail-info-bar-grey", bar1Width, _chart2.big_gap, _color.cluster)
+                  secRectGroup.appendChild(secBar1Rect)
+            const secImgGroup = document.createElementNS(_svgNS, 'g')
+                  secImgGroup.setAttribute('transform', `translate(0, ${_margin.bottom * 2.2})`);
+                  secRectGroup.appendChild(secImgGroup)
+            const secHighlightImg = _createImage(0, 0, id = null, 'detail-info-color-code-img', `img/color_shade/${d.title}_code.png`, _canvasWidth * _onGetRatio(102, _canvasWidth, null),  _canvasHeight * _onGetRatio(58, null, _canvasHeight))
+                  secImgGroup.appendChild(secHighlightImg)
+            for (var n = 0; n < 2; n++) {
+              const rectColor = n == 0 ? `rgb(${d.fullRGB[0].replaceAll(' ', ', ')})` : `rgb(${d.fullRGB[1].replaceAll(' ', ', ')})`
+              const rectText = n == 0 ? "Base" : "Highlight"
+              const rectHighlightChart = _createRect(_canvasWidth * _onGetRatio(106, _canvasWidth, null), _margin.top * 1.1 * n, id = null, "detail-info-color-code", widthby3 / 2, _canvasHeight * _onGetRatio(27, null, _canvasHeight), rectColor)
+                    secImgGroup.appendChild(rectHighlightChart)
+              const rectBarText = _createText(_canvasWidth * _onGetRatio(156, _canvasWidth, null), (_margin.top * 1.1 * n) + _chart2.smst_gap, id = null, "small-body", "middle", "hanging", "white", rectText)
+                    secImgGroup.appendChild(rectBarText)
+            }
+          } else if (i == 2) {
+            leftYTxt = ['Price Premium', `${(d.price_premium * 100).toFixed(0).toLocaleString()}%`, 'Avg. Resale Price', `$${(minAvgResalePrice).toLocaleString()}`, 'Trading Range', `$${("" + d.range_trade_low).toLocaleString()}`]
+            rightYTxt = [`MSRP: $${d.retail_price}`, '', '', `$${(maxAvgResalePrice).toLocaleString()}`, '', `$${(maxAvgResalePrice).toLocaleString()}`]
+            middleTxt = ['', '', '', `$${(d.retail_price + (d.retail_price * d.price_premium)).toFixed(0).toLocaleString()}`, '', `$${("" + d.range_trade_high).toLocaleString()}`]
+            const secLetfText = _createStackedText(0, 0, leftYTxt, "start", "small-body", _color.greyText, i)
+                  secRectGroup.appendChild(secLetfText)
+            const secRightText = _createStackedText(widthby3, 0, rightYTxt, "end", "small-body", _color.greyText, i)
+                  secRectGroup.appendChild(secRightText)
+            const arrowSymbol = (d.price_premium > 0.01) ? 'arrow_up' : 'arrow_down'
+            const detailSymbol = _createImage(0, _chart2.big_gap, id = null, "detail-info-arrow", `img/${arrowSymbol}.svg`, _chart2.smst_gap, height = null)
+                  secRectGroup.appendChild(detailSymbol)
+            for (var m = 0; m < 2; m++) {
+              const secBarBGChart = _createRect(0, _margin.bottom + (m * 1.3 * _margin.bottom + (_margin.top * 0.7)), id = null, "detail-info-bar-bg", widthby3, _chart2.big_gap, _color.chartBG)
+                    secRectGroup.appendChild(secBarBGChart)
+              bar2Width = m == 0 ? (widthby3 * (d.retail_price + (d.retail_price * d.price_premium)) / maxAvgResalePrice) : widthby3 * d.range_trade_high / maxAvgResalePrice
+              barStartX = m == 0 ? 0 : widthby3 * d.range_trade_low / maxAvgResalePrice
+              collectText = m == 0 ? middleTxt[3] : middleTxt[5]
+              const secMddText = _createStackedText(bar2Width, _margin.bottom + (m * 1.326 * _margin.bottom + (_margin.top * 0.71)), collectText, "start", "small-body", _color.premiumPrice, i)
+                    secRectGroup.appendChild(secMddText)
+              const secPremiumChart = _createRect(barStartX, _margin.bottom + (m * 1.3 * _margin.bottom + (_margin.top * 0.7)), id = null, "detail-info-bar-primary", bar2Width, _chart2.big_gap, _color.premiumPrice)
+                    secRectGroup.appendChild(secPremiumChart)
+              if (m == 1) {
+                bar1Width = widthby3 * d.retail_price / maxAvgResalePrice
+                const secBarGreyRect = _createRect(0, _margin.bottom + (m * 1.3 * _margin.bottom + (_margin.top * 0.7)), id = null, "detail-info-bar-grey", bar1Width, _chart2.big_gap, _color.msrp)
+                      secRectGroup.appendChild(secBarGreyRect)
+              }
+            }
+           } else {
+            leftYTxt = ['Total Resale Volume', '204', 'Number of Asks',  '', 'Number of Bids']
+            rightYTxt = ['' , '', '', `${(maxNumOfAsks).toLocaleString()}`, '', `${(maxNumOfBids).toLocaleString()}`]
+            middleTxt = ['' , '', '', `${(d.number_of_Asks).toLocaleString()}`, '', `${(d.number_of_Bids).toLocaleString()}`]
+            const secLetfText = _createStackedText(0, 0, leftYTxt, "start", "small-body", _color.greyText, i)
+                  secRectGroup.appendChild(secLetfText)
+            const secRightText = _createStackedText(widthby3, 0, rightYTxt, "end", "small-body", _color.greyText, i)
+                  secRectGroup.appendChild(secRightText)
+            for (var m = 0; m < 2; m++) { 
+              bar2Width = m == 0 ? widthby3 * d.number_of_Asks / maxNumOfAsks : widthby3 * d.number_of_Bids / maxNumOfBids
+              collectText =  m == 0 ? middleTxt[3] : middleTxt[5]
+              const secBarBGChart = _createRect(0, _margin.bottom + (m * 1.3 * _margin.bottom + (_margin.top * 0.7)), id = null, "detail-info-bar-bg", widthby3, _chart2.big_gap, _color.chartBG)
+                    secRectGroup.appendChild(secBarBGChart)
+              const secMddText = _createStackedText(bar2Width, _margin.bottom + (m * 1.3 * _margin.bottom + (_margin.top * 0.7)), collectText, "start", "small-body", _color.resaleVolume, i)
+                    secRectGroup.appendChild(secMddText)
+              const secresaleChart = _createRect(0, _margin.bottom + (m * 1.3 * _margin.bottom + (_margin.top * 0.7)), id = null, "detail-info-bar-primary", bar2Width, _chart2.big_gap, _color.resaleVolume)
+                    secRectGroup.appendChild(secresaleChart)
+            }
           }
+            detailInfos.appendChild(secRectGroup)
         }
-      }
-        detailInfos.appendChild(secColorImgGroup)
-        detailInfos.appendChild(secRectGroup)
-    }
-        detailInfos.appendChild(detailTitle)
-        detailInfos.appendChild(detailSubTitle)
-        detailInfos.appendChild(detailThmnail)
-    bottomDetail.appendChild(detailInfos)
-  }
+          bottomDetail.appendChild(detailInfos) 
+        }
+    })
+  }    
   // remove children nodes from parent
   function _removeAllChildNodes(parent) {
     while (parent.firstChild) parent.removeChild(parent.firstChild);
@@ -970,14 +987,13 @@ Promise.all([
 
   // init main map + below chart
   function _onInit(colorMapData, typeFeature){
-    // gsap.to(".toogleBG-default", {duration: 1.2, scaleX:0.8, scaleY:0.8, force3D:true, yoyo:true, repeat:-1, ease: "power1.inOut"});
     if (container) _removeAllChildNodes(container);
     if (typeFeature == 'colorCluster') {
       // create init map
       const sec0Svg = document.createElementNS(_svgNS, 'svg');
             sec0Svg.setAttribute('id', 'colorCluster');
             sec0Svg.setAttribute('width', _canvasWidth);
-            sec0Svg.setAttribute('height', _canvasHeight * 0.8);
+            sec0Svg.setAttribute('height', _canvasHeight * 1.1);
             container.appendChild(sec0Svg)
       _OnInitColorCluster(sec0Svg, typeFeature);
     } else {
@@ -996,6 +1012,10 @@ Promise.all([
       const bottomDetail = document.createElementNS(_svgNS, 'svg')
             bottomDetail.setAttribute('id', 'detail-infos');
             mainSVG.appendChild(bottomDetail)
+      const sec1Rect = _createRect(_margin.left, _canvasHeight * 0.46, 'empty-detail-BG', classes = null, _canvasWidth - (_margin.left * 2),  _canvasHeight * 0.224 - _margin.bottom, "rgba(220,220,220,0.1)")
+            sec1Rect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
+            sec1Rect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
+            mainSVG.appendChild(sec1Rect);
       // call animation on each sneakers
       let isHover = false;
       const hoverRect = document.getElementById('display-none')
@@ -1010,6 +1030,8 @@ Promise.all([
           document.getElementById('chartBG').setAttribute('display', 'block');
           document.getElementById('legend').setAttribute('display', 'block');
           document.getElementById('yAxis').setAttribute('display', 'block');
+          const detailInfos = document.getElementById('detail-infos');
+          if (detailInfos) _removeAllChildNodes(detailInfos);
           _updateMouseX(e, isHover, colorMapData, typeFeature);
         }
       })
@@ -1028,11 +1050,12 @@ Promise.all([
         isHover = false
         if (gsap.getById("imgRise")) gsap.getById("imgRise").pause(); //imgFall
         if (!isHover) gsap.getById("imgRise").paused( !gsap.getById("imgRise").paused());
-        
         const sneakersGroup = document.querySelectorAll('.below-sneakers-img')
         sneakersGroup.forEach(item => {
+          item.style.cursor = "pointer"
           item.addEventListener("click", (e)=> {
-            // _onInitDetailInfos(e.target)
+            console.log('*', typeFeature)
+            _onInitDetailInfos(e.target)
           })
         })
       })
@@ -1076,11 +1099,12 @@ Promise.all([
 
   const typeFeatures = ['tradingRange', 'resaleVolume', 'colorCluster']
   const idFeatures = {tradingRange:'redBtn', resaleVolume:'blueBtn', colorCluster: 'toggleBtn'}
-  const initValue = typeFeatures[0]
+  const initValue = typeFeatures[2]
   _onInit(colorMapData, initValue)
   if (initValue != 'colorCluster') {
     document.getElementById(idFeatures[initValue]).classList.add(idFeatures[initValue])
   } else {
+    document.getElementById('toggleBtn').classList.toggle('selected')
     document.getElementById('circle-txt').classList.toggle('toggleTxt'); 
     document.getElementById('circle-xs').classList.toggle('toggleBG'); 
     document.getElementById('circle-xl').classList.toggle('toggleBG') 

@@ -14,8 +14,9 @@ svg, div {margin: 0; padding: 0; display: block;}
 .title {font-weight: 300;font-size: 1.4rem; margin: 0; line-height: 96%;}
 .thin-biggest-body {font-weight: 100; font-size: 1.4rem; letter-spacing: -0.02em}
 .bigger-body {font-weight: 700; font-size: 0.82rem; letter-spacing: -0.02em}
-.big-body {font-weight: 500; font-size: 0.8rem; letter-spacing: -0.03em; word-spacing: -0.16em;}
-.small-body {font-size: 0.66rem; letter-spacing: -0.02em; line-height: 96%;}
+.big-body {font-weight: 500; font-size: 0.82rem; letter-spacing: -0.03em; word-spacing: -0.1em;}
+.mideum-body {font-weight: 300; font-size: 0.72rem; letter-spacing: -0.03em; word-spacing: -0.06em;}
+.small-body {font-size: 0.68rem; letter-spacing: -0.02em; line-height: 99%;}
 .smaller-body {font-weight: 300; font-size: 0.6rem; letter-spacing: -0.02em;}
 .bold {font-weight: 700;}
 .light {font-weight: 100;}
@@ -29,8 +30,8 @@ svg, div {margin: 0; padding: 0; display: block;}
 .toggleBG {background-color: rgba(51,51,51,.8); transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
 .toggleTxt {font-weight: 300; color: #efc100; z-index: 2;}
 
-.button {min-width: 4rem; border-style: solid; border-color: #b3b3b3; color: #333333; background-color: white; border-width: 0.02rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
-.redBtn {min-width: 4rem; border-style: solid; color:white; border-color: #f65e5d; background-color: #f65e5d; border-width: 0.01.4rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
-.blueBtn {min-width: 4rem; border-style: solid; color: white; border-color: #0382ed; background-color:#0382ed; border-width: 0.02rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
+.button {min-width: 4rem; border-style: solid; border-color: #b3b3b3; color: #333333; background-color: white; border-width: 0.01rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
+.redBtn {min-width: 4rem; border-style: solid; color:white; border-color: #333333; background-color: #f65e5d; border-width: 0.01rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
+.blueBtn {min-width: 4rem; border-style: solid; color: white; border-color: #333333; background-color:#0382ed; border-width: 0.01rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
 
 .detail-info-thmnail {max-height: 12rem;}
