@@ -80,13 +80,48 @@ let colorWayNname = [{target: '350 V2 Natural', fullRGB: ["241 244 238", "219 21
                     {target: '350 Turtledove', fullRGB: ["166 166 164", "245 243 230", "70 68 66"]}]
 
   // Euclidean Distance formula
-  function _distance(v1, v2) {
-    var total = 0;
-    for (var i = 0; i < v1.length; i++) {
-      total += Math.pow(v2[i] - v1[i], 2);      
-    }
-    return Math.sqrt(total);
+  function deltaE(rgbA, rgbB) {
+    let labA = rgb2lab(rgbA);
+    let labB = rgb2lab(rgbB);
+    let deltaL = labA[0] - labB[0];
+    let deltaA = labA[1] - labB[1];
+    let deltaB = labA[2] - labB[2];
+    let c1 = Math.sqrt(labA[1] * labA[1] + labA[2] * labA[2]);
+    let c2 = Math.sqrt(labB[1] * labB[1] + labB[2] * labB[2]);
+    let deltaC = c1 - c2;
+    let deltaH = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
+    deltaH = deltaH < 0 ? 0 : Math.sqrt(deltaH);
+    let sc = 1.0 + 0.045 * c1;
+    let sh = 1.0 + 0.015 * c1;
+    let deltaLKlsl = deltaL / (1.0);
+    let deltaCkcsc = deltaC / (sc);
+    let deltaHkhsh = deltaH / (sh);
+    let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
+    return i < 0 ? 0 : Math.sqrt(i);
   }
+  
+  function rgb2lab(rgb){
+    let r = rgb[0] / 255, g = rgb[1] / 255, b = rgb[2] / 255, x, y, z;
+    r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+    g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+    b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+    x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+    y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+    z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+    x = (x > 0.008856) ? Math.pow(x, 1/3) : (7.787 * x) + 16/116;
+    y = (y > 0.008856) ? Math.pow(y, 1/3) : (7.787 * y) + 16/116;
+    z = (z > 0.008856) ? Math.pow(z, 1/3) : (7.787 * z) + 16/116;
+    return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
+  }
+
+  // function _distance(v1, v2) {
+  //   var total = 0;
+  //   for (var i = 0; i < v1.length; i++) {
+  //     total += Math.pow(v2[i] - v1[i], 2);      
+  //   }
+  //   return Math.sqrt(total);
+  // }
+
   function _findIdx(arr, initItem) {
     let index = parseInt(arr.map((item, index) => item.target == initItem && index).reduce((a, b) => a + b));
     return index
@@ -124,7 +159,7 @@ let colorWayNname = [{target: '350 V2 Natural', fullRGB: ["241 244 238", "219 21
     let tempName = [];
     if (reminderArr.length != 0){
       reminderArr.forEach(item => { 
-        let distance = parseFloat(_distance(item.fullRGB[0].split(' ').map(d => parseInt(d)), arr[targetIdx].fullRGB[0].split(' ').map(d => parseInt(d))).toFixed(2));
+        let distance = parseFloat(deltaE(item.fullRGB[0].split(' ').map(d => parseInt(d)), arr[targetIdx].fullRGB[0].split(' ').map(d => parseInt(d))).toFixed(2));
         tempValue.push(distance)
         tempName.push(item.target)
       })
@@ -136,12 +171,12 @@ let colorWayNname = [{target: '350 V2 Natural', fullRGB: ["241 244 238", "219 21
     } else {
       let num = 0;
       deltaECollection.forEach(item => {
-        let distance_highlight = parseFloat(_distance(item.fullRGB[0].split(' ').map(d => parseInt(d)), item.fullRGB[1].split(' ').map(d => parseInt(d))).toFixed(2));
+        let distance_highlight = parseFloat(deltaE(item.fullRGB[0].split(' ').map(d => parseInt(d)), item.fullRGB[1].split(' ').map(d => parseInt(d))).toFixed(2));
         item.distance_highlight = distance_highlight
 
-        if (item.distance_primary < 30) {
+        if (item.distance_primary <= 8.3) {
           item.cluster = `cluster${num}`
-        } else if (item.distance_primary > 30) {
+        } else if (item.distance_primary > 8.3) {
           num += 1
           item.cluster = `cluster${num}`
         }
