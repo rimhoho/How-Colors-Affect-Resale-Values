@@ -12,17 +12,17 @@ import re
 
 def onSelenium():
     driver = webdriver.Chrome(executable_path=r'C:\\Users\\Hyerim Hwang\\Desktop\\chromedriver.exe')  
-    searchResult = "https://stockx.com/search/adidas/yeezy/release-date?s=yeezy&page="
+    searchResult = "https://stockx.com/search/adidas/yeezy/release-date?size_types=men&s=yeezy&page="
     print('Driver Begins')
     totalList = {}
-    for page in range(1, 7):
+    for page in range(1, 5):
         driver.get(searchResult + str(page))
         time.sleep(30)
         getTitle = driver.find_elements(By.CSS_SELECTOR, '.css-1iephdx.e1inh05x0')
         getImage = driver.find_elements(By.CSS_SELECTOR, '.css-13o3lxt.e1jyvhgp0')
         getProductId = driver.find_elements(By.CSS_SELECTOR, '.tile.css-1bonzt1.e1yt6rrx0')
         getReleaseDate= driver.find_elements(By.CSS_SELECTOR, '.change.release_date.css-td8rut.ees1vvt0')
-        exception = ['RNNR', '(Kids)', '(Kid)','(Infants)', '(Infant)', 'High', 'Powerphase', '750', '950', 'N/A', '(Reflective)', '(Friends & Family)', 'Cleat Turtledove', 'Desert Boot', 'Static Reflective', 'Carbon Reflective', 'Pepper Reflective', 'Oat Reflective', 'Cinder Reflective', 'Mist Reflective', 'Calcite Glow']
+        exception = ['RNNR', 'High', 'Powerphase', '750', '950', 'N/A', '(Reflective)', '(Friends & Family)', 'Cleat Turtledove', 'Desert Boot', 'Static Reflective', 'Carbon Reflective', 'Pepper Reflective', 'Oat Reflective', 'Cinder Reflective', 'Mist Reflective']
         deleteIndex = []
         for i in range(len(getTitle)):
             if len([stopword for stopword in exception if(stopword in getTitle[i].text)]) != 0 or len([stopword for stopword in exception if(stopword in getReleaseDate[i].text)]) != 0:
@@ -56,11 +56,11 @@ def onRequest(productIdList):
     totalProduct = []
     # ua = UserAgent()
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36', # Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36 
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-                'Accept-Encoding': 'none',
-                'Accept-Language': 'en-US,en;q=0.8',
-                'Connection': 'keep-alive'}
+               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+               'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+               'Accept-Encoding': 'none',
+               'Accept-Language': 'en-US,en;q=0.8',
+               'Connection': 'keep-alive'}
     cookies = browser_cookie3.chrome(domain_name='.stockx.com')
     for productId in productIdList:
         productObj = requests.get(f'https://stockx.com/api/products/{productId}?includes=market,360&currency=USD&country=US', headers=headers, cookies=cookies)     
@@ -123,7 +123,7 @@ def onInit():
     productIdList = []
     seleniumData = [] 
 
-    for page in range(1, 7):
+    for page in range(1, 5):
         for item in totalList[f'page_{page}']:
             productIdList.append(item['product_id'])
             seleniumData.append(item)
