@@ -1,5 +1,7 @@
-body {max-width: 1920px; min-height: 100vh; margin: auto; color: #37383D;}
-svg, div {margin: 0; padding: 0; display: block;}
+body {max-width: 1580px; margin: auto; color: #37383D;}
+div {margin: 0; padding: 0;}
+#container {display: relative;}
+.top {position: absolute;}
 
 .justify-end {display: flex; justify-content: flex-end;}
 .space-between {justify-content: space-between;}
@@ -12,13 +14,15 @@ svg, div {margin: 0; padding: 0; display: block;}
 .margin-left-sm {margin-left: 2rem;}
 .margin-bottom {margin-bottom: 2rem;}
 
-.title {font-weight: 300;font-size: 1.4rem; margin: 0; line-height: 96%;}
-.thin-biggest-body {font-weight: 100; font-size: 1.4rem; letter-spacing: -0.02em}
+.title {font-weight: 300; font-size: 1.5rem; margin: 0; line-height: 96%;}
+.thin-biggest-body {font-weight: 100; font-size: 1.24rem; letter-spacing: -0.02em}
 .bigger-body {font-weight: 300; font-size: 1rem; letter-spacing: -0.02em}
-.big-body {font-weight: 500; font-size: 0.8rem; letter-spacing: -0.03em; word-spacing: -0.1em;}
-.mideum-body {font-weight: 500; font-size: 0.72rem; letter-spacing: -0.03em; word-spacing: -0.06em;}
+.big-body {font-weight: 700; font-size: 0.8rem; letter-spacing: -0.03em; word-spacing: -0.1em;}
+.mideum-body {font-weight: 500; font-size: 0.7rem; letter-spacing: -0.03em; word-spacing: -0.06em;}
 .small-body {font-size: 0.65rem; letter-spacing: -0.02em;}
 .smaller-body {font-weight: 500; font-size: 0.605rem; letter-spacing: -0.02em;}
+.smallest-body {font-weight: 500; font-size: 0.58rem; letter-spacing: -0.02em;}
+.legend-body {font-weight: 500; font-size: 0.48rem; letter-spacing: -0.02em;}
 .bold {font-weight: 700;}
 .light {font-weight: 100;}
 .left-round {border-top-left-radius: 0.4rem; border-bottom-left-radius: 0.4rem;}
@@ -32,3 +36,9 @@ svg, div {margin: 0; padding: 0; display: block;}
 .detail-BG {min-width: 254px;}
 
 .pointer {cursor: pointer;}
+
+/* width */
+::-webkit-scrollbar {width: 0.5rem;height: 0.5rem;}
+::-webkit-scrollbar-track {background: #F9F9F9; }
+::-webkit-scrollbar-thumb {background: #A2A3A7; border-radius: 20px;}
+::-webkit-scrollbar-thumb:hover {background: #303642; }
