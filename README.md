@@ -1,6 +1,6 @@
 ## How Colors Affect Resale Values [💻Link](https://how-colors-affect.herokuapp.com/)
 
-"Scraped [StockX.com](https://stockx.com/search/adidas/yeezy/release-date?s=yeezy) sales data and visualized a color cluster map"
+"Scraped [StockX.com](https://stockx.com/search/adidas/yeezy/release-date?s=yeezy) resales data and visualized a color cluster map"
 
 How Colors Affect Resale Values is a personal project where I experiment with data-driven, interactive explorations with my interests. It began when I was using data viz and data science tools to understand user behavior, and started playing around with sneakers data in my spare time.
 
