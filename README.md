@@ -1,4 +1,3 @@
-Focused on the Yeezy Sneakers' Resale Values
 ## How Colors Affect Resale Values
 
 "Scraped [StockX.com](https://stockx.com/search/adidas/yeezy/release-date?s=yeezy) sales data and visualized a color cluster map"
