@@ -1,4 +1,4 @@
-## How Colors Affect Resale Values [💻](https://how-colors-affect.herokuapp.com/)
+## How Colors Affect Resale Values [💻Link](https://how-colors-affect.herokuapp.com/)
 
 "Scraped [StockX.com](https://stockx.com/search/adidas/yeezy/release-date?s=yeezy) sales data and visualized a color cluster map"
 
