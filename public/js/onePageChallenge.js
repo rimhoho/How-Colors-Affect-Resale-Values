@@ -21,7 +21,8 @@
                    bigger_gap: _canvasHeight * _onGetRatio(22, null, _canvasHeight), big_gap: _canvasHeight * _onGetRatio(16, null, _canvasHeight),
                    sm_gap: _canvasHeight * _onGetRatio(12, null, _canvasHeight), smer_gap: _canvasHeight * _onGetRatio(10, null, _canvasHeight),
                    smst_gap: _canvasHeight * _onGetRatio(8, null, _canvasHeight)}
-  const _color = {mapLine: "#CCCCCC", mainBG: "#f9f9f9", subBG: "#FCFCFC", legend: "#303642", premiumPrice: "#F65E5D", resaleVolume: "#0382ed", msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD"}
+  const _color = {mapLine: "#CCCCCC", mainBG: "#f9f9f9", subBG: "#FCFCFC", legend: "#303642", premiumPrice: "#F65E5D", resaleVolume: "#0382ed", 
+                  msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD", blueGrey: "#3e485c"}
   const _colorXScale = _canvasWidth - (_margin.left * 2) - _margin.right;
   let colorMapData = [], avgSumOfSold = 0;
   let flag4cluster = true;
@@ -291,7 +292,7 @@
       const legendBoxG = document.createElementNS(_svgNS, 'g');
             legendBoxG.setAttribute('id', 'legend-box-group');
             target.appendChild(legendBoxG)
-      let titleContext, bodyContext, bgX, bgW, bgH, title, legendColor;
+      let titleContext, bodyContext, bgX, bgW, bgH, title, legendColor, maxLength;
       if (typeFeature == 'colorDifference') {
             titleContext = ['Filter By', 'Delta E', 'Algorithms']
             bodyContext = 'Delta E is a metric for understanding how the human eye perceives color differences. A sneaker that has a primary color that relatively closes to RGB(0, 0, 0) was selected to applying the first-ever Delta E - Euclidean Distance formula and measuring the distance between the two points in 3D space. Based on the standard perception ranges (0 to 100), the collected Delta E distributions were divided into 11 clusters by 9.43 - The number comes from several tries around ±10 to figure which numbers can be clustered or not.'
@@ -299,7 +300,8 @@
             bgW = _margin.columnWidth * 1.566
             bgH = _margin.bottom * 1.76
             title = 'Standard Perception Ranges'
-            legendColor = _color.legend
+            legendColor = _color.blueGrey
+            maxLength = _chart2.width/1.48
             const textFilter = ['0 <= 1.0', '1 ~ 2', '2 ~ 10', '11 ~ 49', '100']
             const textDescription = ['Not perceptible by the human eye',
                                           'Perceptible through close observation',
@@ -307,12 +309,11 @@
                                           'Colors are more similar than the opposite',
                                           'Colors are exactly the opposite']
             const legendBG = _createRect(0, 0, id = null, classes = null, bgW, bgH, legendColor)
-                  legendBG.setAttribute('fill-opacity', 0.9)
                   legendBoxG.appendChild(legendBG)
             for (var q = 0; q < 5; q++) {
-                  const clusterFilter = _createText(_chart2.big_gap, _chart2.big_gap * 1.2 + (_chart2.sm_gap * q * 1.16), id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, "white", textFilter[q])
+                  const clusterFilter = _createText(_chart2.big_gap, _chart2.big_gap * 1.2 + (_chart2.sm_gap * q * 1.16), id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, _color.premiumPrice, textFilter[q])
                         legendBoxG.appendChild(clusterFilter)
-                  const clusterDescription = _createText(_margin.right * 1.2, _chart2.big_gap  * 1.2+ (_chart2.sm_gap * q * 1.16), id = null, 'smallest-body', textAnchor = null, dominantBaseline = null, _color.lightGrey, textDescription[q])
+                  const clusterDescription = _createText(_margin.right * 1.2, _chart2.big_gap  * 1.2+ (_chart2.sm_gap * q * 1.16), id = null, 'smallest-body', textAnchor = null, dominantBaseline = null, _color.mainBG, textDescription[q])
                         legendBoxG.appendChild(clusterDescription)
             }
             const titleTxtEl = _createText(bgW, _chart2.sm_gap * -0.4, 'legend-title', 'smallest-body', 'end', dominantBaseline = null, _color.text, title)
@@ -323,8 +324,7 @@
                   txt4DeltaE.setAttribute('x', _margin.left * 1.384);
                   txt4DeltaE.setAttribute('y', _margin.bottom)
                   txt4DeltaE.setAttribute('class', 'smaller-body')
-                  txt4DeltaE.setAttribute('fill', _color.greyText)
-                  txt4DeltaE.innerHTML = `<a target="blank" fill="${_color.greyText}" class="thin-biggest-body" xlink:href="http://zschuessler.github.io/DeltaE/learn/">٭</a>`
+                  txt4DeltaE.innerHTML = `<a target="blank" fill="${_color.premiumPrice}" class="thin-biggest-body" xlink:href="http://zschuessler.github.io/DeltaE/learn/">٭</a>`
                   // txt4DeltaE.setAttribute('text-decoration', 'underline')
                   legendCopyG.appendChild(txt4DeltaE)
       } else {
@@ -334,6 +334,7 @@
             bgW = _margin.columnWidth * 0.65
             bgH = _margin.bottom * 1.3
             legendColor = _color.lightGrey
+            maxLength = _chart2.width/1.05
       }
       // add legend copy - titletext
       for (var m = 0; m < titleContext.length; m++) {
@@ -354,7 +355,7 @@
             legendCopyG.appendChild(bodyText)
             } 
       }
-      _wrapText2Tspan(bodyText.childNodes, _chart2.width/1.48, bodyContext, count4wrap, _color.text)
+      _wrapText2Tspan(bodyText.childNodes, maxLength, bodyContext, count4wrap, _color.text)
     }
 
     // create init color cluster
@@ -409,7 +410,7 @@
                   for (var t = 0; t < 2; t++) {
                     const textY = t == 0 ? clusteY - (_chart2.big_gap * 0.88) : clusteY - (_chart2.smst_gap * 0.6)
                     const textTitle = t == 0 ? _clusterNames[key].split(' + ')[0] + ' +' : _clusterNames[key].split(' + ')[1]
-                    const ct = _createText(clusterX + (_margin.gap * 0.3), textY, id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, _color.text, textTitle)
+                    const ct = _createText(clusterX + (_margin.gap * 0.3), textY, id = null, 'small-body bold', textAnchor = null, dominantBaseline = null, _color.legend, textTitle)
                           target.appendChild(ct)
                     gsap.from(ct, {delay: 0.6, duration: 1.2, opacity: 0, y: -textY + _chart2.height, ease: "back.out(1.7)", stagger: {from: 0, amount: 0.4}});
                   }
@@ -417,9 +418,9 @@
                   const clusterTextY = u == 0 ? clusteY - (_chart2.smst_gap * 0.66) : clusteY + (_chart2.smst_gap * 1.8)
                   const clusterContents = u == 0 ? _clusterNames[key] : colorMapData.length
                   let colorTweek;
-                  if (_clusterNames[key] == 'White') colorTweek = u == 0 ? _color.text : _color.text
-                  else colorTweek = u == 0 ? _color.text : _color.mainBG
-                  const clusterText = _createText(clusterX + (_margin.gap * 0.3), clusterTextY, id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, colorTweek, clusterContents) 
+                  if (_clusterNames[key] == 'White') colorTweek = u == 0 ? _color.legend : _color.legend
+                  else colorTweek = u == 0 ? _color.legend : _color.mainBG
+                  const clusterText = _createText(clusterX + (_margin.gap * 0.3), clusterTextY, id = null, 'small-body bold', textAnchor = null, dominantBaseline = null, colorTweek, clusterContents) 
                   if (u == 1) clusterText.setAttribute('class', 'smaller-body');
                   target.appendChild(clusterText);
                   gsap.from(clusterText, {delay: 0.6, duration: 1, opacity: 0, y: -clusterTextY + _chart2.height, ease: "back.out(1.7)", stagger: {from: 0, amount: 0.4}});
@@ -547,8 +548,8 @@
                   _createColorChart(target = null, dataPrimaryD)
             }
             } else {
-            gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:252, fill: _color.popupBG, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.lightGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:252, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.mainBG, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt2, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:-36, ease: "power4.out", stagger: {from: 0, amount: 0.2}});    
             isToggle = true;
@@ -763,9 +764,13 @@
       const mouseY = _canvasHeight/3.2//pageY >= 580 ? pageY - (_margin.bottom * 5.4) : pageY - (_margin.top * 1.1)
       const detailInfos = document.getElementById('detail-chart')
             detailInfos.setAttribute('transform', `translate(${mouseX}, ${mouseY})`);
-      const sec0RectBg = _createRect(_margin.left * -4.72, _margin.bottom * -8.4, 'outside-detail-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, "black")
-            sec0RectBg.setAttribute('fill-opacity', 0.34)
-            detailInfos.appendChild(sec0RectBg);
+      const detailOutBg = document.createElementNS(_svgNS, 'g');
+            detailOutBg.setAttribute('id', 'outside-detail-BG-group');
+            detailOutBg.setAttribute('transform', `translate(${-mouseX}, ${-mouseY})`);
+            detailInfos.appendChild(detailOutBg)
+      const sec0RectBg = _createRect(0, 0, 'outside-detail-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, "black")
+            sec0RectBg.setAttribute('fill-opacity', 0.4)
+            detailOutBg.appendChild(sec0RectBg);
       const sec0RectBG1 = _createRect(0, 0, 'detail-BG1', classes = null, _canvasWidth * _onGetRatio(264, _canvasWidth, null), _canvasHeight * _onGetRatio(588, null, _canvasHeight), `rgb(${sneakersData.fullRGB[0].replaceAll(' ', ', ')})`)
             sec0RectBG1.setAttribute('rx', _canvasWidth * _onGetRatio(12, _canvasWidth, null))
             sec0RectBG1.setAttribute('ry', _canvasWidth * _onGetRatio(12, _canvasWidth, null))
@@ -905,13 +910,14 @@
       if (container) _removeAllChildNodes(container);
       if (document.getElementById('toggle-button'))  _removeAllChildNodes(document.getElementById('toggle-button'));
       // create toggle btn
-      const toggleWidth = _canvasWidth * _onGetRatio(106, _canvasWidth, null) 
-      const toggleStartX = _canvasWidth - Math.floor(window.innerWidth) < 0 ? Math.floor(window.innerWidth) - ((Math.floor(window.innerWidth) - _canvasWidth)/2) - toggleWidth : _canvasWidth - _margin.left - toggleWidth
+      const toggleWidth = _canvasWidth * _onGetRatio(106, _canvasWidth, null)
       const togBtn = document.getElementById('toggle-button');
-            togBtn.setAttribute('width', Math.floor(window.innerWidth) - toggleStartX);
-            togBtn.setAttribute('height', _margin.bottom * 2);
+            togBtn.setAttribute('width', _canvasWidth);
+            togBtn.setAttribute('height', _canvasHeight * _onGetRatio(46, null, _canvasHeight));
+      const titleCopy = _createText(_margin.left, _margin.top, 'title', 'title', 'start', dominantBaseline = null, _color.mainBG, 'How Colors Affect Resale Values')
+            togBtn.appendChild(titleCopy)
       const togGroup = document.createElementNS(_svgNS, 'g')
-            togGroup.setAttribute('transform', `translate(${_margin.gap}, ${_margin.top * 1.1})`);
+            togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${0})`);
       const togTxt1 = _createText(_canvasWidth * _onGetRatio(39, _canvasWidth, null), _chart2.big_gap * 1.3, 'delta-E', "smaller-body pointer", "start", dominantBaseline= null, _color.mapLine, 'Delta E (ΔE)')
             togTxt1.setAttribute('opacity', 1)
       const togTxt2 = _createText(_canvasWidth * _onGetRatio(34, _canvasWidth, null), _chart2.big_gap * 1.3, 'release-date', "smaller-body pointer", "start", dominantBaseline= null, _color.text, 'Release Date')
@@ -958,6 +964,9 @@
             container.appendChild(sec0Svg)
       const sec0Rect = _createRect(0, 0, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.2 - _margin.top, _color.mainBG)
             sec0Svg.appendChild(sec0Rect);
+      // const sec0Rect2 = _createRect(0, _canvasHeight * 0.2 - _margin.top, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.8, _color.blueGrey)
+      //       sec0Rect2.setAttribute('fill-opacity', 0.8)
+      //       sec0Svg.appendChild(sec0Rect2);      
       const sec0G = document.createElementNS(_svgNS, 'g');
             sec0G.setAttribute('transform', `translate(${_margin.left}, 0)`);
       const sec0Line = document.createElementNS(_svgNS, 'path');
