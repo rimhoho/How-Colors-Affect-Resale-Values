@@ -207,6 +207,8 @@
       for (var i = count4wrap; i < length; i++) {
         const previous = temp_text
         temp_text = temp_text + ' ' + words[i]
+        console.log(temp_text)
+        if (temp_text.includes('9.43')) textColor = _color.premiumPrice
         bodyTextEl[count4wrap].textContent = temp_text
         bodyTextEl[count4wrap].setAttribute('fill', textColor)
         const maxWidthText = bodyTextEl[count4wrap].getComputedTextLength()
