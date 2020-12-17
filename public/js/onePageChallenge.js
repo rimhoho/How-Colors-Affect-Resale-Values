@@ -22,7 +22,7 @@
                    sm_gap: _canvasHeight * _onGetRatio(12, null, _canvasHeight), smer_gap: _canvasHeight * _onGetRatio(10, null, _canvasHeight),
                    smst_gap: _canvasHeight * _onGetRatio(8, null, _canvasHeight)}
   const _color = {mapLine: "#CCCCCC", mainBG: "#f9f9f9", subBG: "#FCFCFC", legend: "#303642", premiumPrice: "#F65E5D", resaleVolume: "#0382ed", 
-                  msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD", blueGrey: "#3e485c"}
+                  msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD", blueGrey: "#3e485c", orange: "#EDDBD9"}
   const _colorXScale = _canvasWidth - (_margin.left * 2) - _margin.right;
   let colorMapData = [], avgSumOfSold = 0;
   let flag4cluster = true;
@@ -207,8 +207,6 @@
       for (var i = count4wrap; i < length; i++) {
         const previous = temp_text
         temp_text = temp_text + ' ' + words[i]
-        console.log(temp_text)
-        if (temp_text.includes('9.43')) textColor = _color.premiumPrice
         bodyTextEl[count4wrap].textContent = temp_text
         bodyTextEl[count4wrap].setAttribute('fill', textColor)
         const maxWidthText = bodyTextEl[count4wrap].getComputedTextLength()
@@ -313,7 +311,7 @@
             const legendBG = _createRect(0, 0, id = null, classes = null, bgW, bgH, legendColor)
                   legendBoxG.appendChild(legendBG)
             for (var q = 0; q < 5; q++) {
-                  const clusterFilter = _createText(_chart2.big_gap, _chart2.big_gap * 1.2 + (_chart2.sm_gap * q * 1.16), id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, _color.premiumPrice, textFilter[q])
+                  const clusterFilter = _createText(_chart2.big_gap, _chart2.big_gap * 1.2 + (_chart2.sm_gap * q * 1.16), id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, _color.orange, textFilter[q])
                         legendBoxG.appendChild(clusterFilter)
                   const clusterDescription = _createText(_margin.right * 1.2, _chart2.big_gap  * 1.2+ (_chart2.sm_gap * q * 1.16), id = null, 'smallest-body', textAnchor = null, dominantBaseline = null, _color.mainBG, textDescription[q])
                         legendBoxG.appendChild(clusterDescription)
@@ -326,7 +324,7 @@
                   txt4DeltaE.setAttribute('x', _margin.left * 1.384);
                   txt4DeltaE.setAttribute('y', _margin.bottom)
                   txt4DeltaE.setAttribute('class', 'smaller-body')
-                  txt4DeltaE.innerHTML = `<a target="blank" fill="${_color.premiumPrice}" class="thin-biggest-body" xlink:href="http://zschuessler.github.io/DeltaE/learn/">٭</a>`
+                  txt4DeltaE.innerHTML = `<a target="blank" fill="${_color.orange}" class="thin-biggest-body" xlink:href="http://zschuessler.github.io/DeltaE/learn/">٭</a>`
                   // txt4DeltaE.setAttribute('text-decoration', 'underline')
                   legendCopyG.appendChild(txt4DeltaE)
       } else {
@@ -593,15 +591,16 @@
       const legendTitle = ['', 'Higher Resale Price than MSRP', 'Lower Resale Price than MSRP']
       for (var w = 1; w < 3; w++) {
             const bgX = w == 1 ? (w * _margin.right * 2.6) : (w * _margin.right * 2.6) + _margin.gap
-            const legendRect = _createRect(bgX, _margin.top * -0.34, 'popup-legend-bar', classes = null, _margin.left * 1.14, _margin.bottom, _color.mainBG)
+            const legendRect = _createRect(bgX, _margin.top * -0.34, 'popup-legend-bar', classes = null, _margin.left * 1.14, _margin.bottom, _color.orange)
                   legendRect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
                   legendRect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
+                  legendRect.setAttribute('fill-opacity', 0.5)
                   legendGroup.appendChild(legendRect);
-            const legendtitleTxt = _createText(bgX + (_margin.left * 0.57), _margin.top * -0.1, id = null, 'smallest-body legend-title-txt', "middle", "hanging", _color.lightGrey, legendTitle[w])
+            const legendtitleTxt = _createText(bgX + (_margin.left * 0.57), _margin.top * -0.1, id = null, 'smallest-body legend-title-txt', "middle", "hanging", _color.blueGrey, legendTitle[w])
                   legendGroup.appendChild(legendtitleTxt)
       }
       for (var k = 1; k < 3; k++) {
-            const barColor = k == 1 ? _color.premiumPrice : _color.mapLine
+            const barColor = k == 1 ? _color.premiumPrice : _color.lightGrey
             const legendBar = _createRect(_margin.right * 2.9 * k, _margin.top * 0.4, "popup-legend-bar" , classes = null, _margin.gap * 6.4, _chart2.smst_gap * 0.6, barColor)
                   legendGroup.appendChild(legendBar)
             let colorTxts, textOrder;
@@ -964,7 +963,7 @@
             sec0Svg.setAttribute('width', _canvasWidth);
             sec0Svg.setAttribute('height', _canvasHeight * 0.85);
             container.appendChild(sec0Svg)
-      const sec0Rect = _createRect(0, 0, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.2 - _margin.top, _color.mainBG)
+      const sec0Rect = _createRect(0, 0, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.2 - _margin.top, _color.orange)
             sec0Svg.appendChild(sec0Rect);
       // const sec0Rect2 = _createRect(0, _canvasHeight * 0.2 - _margin.top, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.8, _color.blueGrey)
       //       sec0Rect2.setAttribute('fill-opacity', 0.8)
