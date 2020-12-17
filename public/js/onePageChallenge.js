@@ -21,8 +21,8 @@
                    bigger_gap: _canvasHeight * _onGetRatio(22, null, _canvasHeight), big_gap: _canvasHeight * _onGetRatio(16, null, _canvasHeight),
                    sm_gap: _canvasHeight * _onGetRatio(12, null, _canvasHeight), smer_gap: _canvasHeight * _onGetRatio(10, null, _canvasHeight),
                    smst_gap: _canvasHeight * _onGetRatio(8, null, _canvasHeight)}
-  const _color = {mapLine: "#CCCCCC", mainBG: "#f9f9f9", subBG: "#FCFCFC", legend: "#303642", premiumPrice: "#F65E5D", resaleVolume: "#0382ed", 
-                  msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD", blueGrey: "#3e485c", orange: "#EDDBD9"}
+  const _color = {mapLine: "#CCCCCC", mainBG: "#f9f9f9", subBG: "#FCFCFC", legend: "#303642", premiumPrice: "#F65E5D", resaleVolume: "#0382ed", rose: "#CC6666",
+                  msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD", blueGrey: "#3e485c", orange: "#F2DECE"}
   const _colorXScale = _canvasWidth - (_margin.left * 2) - _margin.right;
   let colorMapData = [], avgSumOfSold = 0;
   let flag4cluster = true;
@@ -311,7 +311,7 @@
             const legendBG = _createRect(0, 0, id = null, classes = null, bgW, bgH, legendColor)
                   legendBoxG.appendChild(legendBG)
             for (var q = 0; q < 5; q++) {
-                  const clusterFilter = _createText(_chart2.big_gap, _chart2.big_gap * 1.2 + (_chart2.sm_gap * q * 1.16), id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, _color.orange, textFilter[q])
+                  const clusterFilter = _createText(_chart2.big_gap, _chart2.big_gap * 1.2 + (_chart2.sm_gap * q * 1.16), id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, _color.rose, textFilter[q])
                         legendBoxG.appendChild(clusterFilter)
                   const clusterDescription = _createText(_margin.right * 1.2, _chart2.big_gap  * 1.2+ (_chart2.sm_gap * q * 1.16), id = null, 'smallest-body', textAnchor = null, dominantBaseline = null, _color.mainBG, textDescription[q])
                         legendBoxG.appendChild(clusterDescription)
@@ -324,7 +324,7 @@
                   txt4DeltaE.setAttribute('x', _margin.left * 1.384);
                   txt4DeltaE.setAttribute('y', _margin.bottom)
                   txt4DeltaE.setAttribute('class', 'smaller-body')
-                  txt4DeltaE.innerHTML = `<a target="blank" fill="${_color.orange}" class="thin-biggest-body" xlink:href="http://zschuessler.github.io/DeltaE/learn/">٭</a>`
+                  txt4DeltaE.innerHTML = `<a target="blank" fill="${_color.rose}" class="thin-biggest-body" xlink:href="http://zschuessler.github.io/DeltaE/learn/">٭</a>`
                   // txt4DeltaE.setAttribute('text-decoration', 'underline')
                   legendCopyG.appendChild(txt4DeltaE)
       } else {
@@ -915,7 +915,7 @@
       const togBtn = document.getElementById('toggle-button');
             togBtn.setAttribute('width', _canvasWidth);
             togBtn.setAttribute('height', _canvasHeight * _onGetRatio(46, null, _canvasHeight));
-      const titleCopy = _createText(_margin.left, _margin.top, 'title', 'title', 'start', dominantBaseline = null, _color.mainBG, 'How Colors Affect Resale Values')
+      const titleCopy = _createText(_margin.left, _margin.top, 'title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
             togBtn.appendChild(titleCopy)
       const togGroup = document.createElementNS(_svgNS, 'g')
             togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${0})`);
@@ -963,7 +963,7 @@
             sec0Svg.setAttribute('width', _canvasWidth);
             sec0Svg.setAttribute('height', _canvasHeight * 0.85);
             container.appendChild(sec0Svg)
-      const sec0Rect = _createRect(0, 0, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.2 - _margin.top, _color.orange)
+      const sec0Rect = _createRect(0, 0, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.2 - _margin.top, _color.mainBG)
             sec0Svg.appendChild(sec0Rect);
       // const sec0Rect2 = _createRect(0, _canvasHeight * 0.2 - _margin.top, 'mapBG', classes = null, _canvasWidth,  _canvasHeight * 0.8, _color.blueGrey)
       //       sec0Rect2.setAttribute('fill-opacity', 0.8)
