@@ -924,6 +924,7 @@
             togBtn.setAttribute('width', _canvasWidth);
             togBtn.setAttribute('height', _canvasHeight * _onGetRatio(56, null, _canvasHeight));
       const dollarSign = _createImage(_margin.left * 0.58, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(70, _canvasWidth, null), _canvasHeight * _onGetRatio(55, null, _canvasHeight))
+            dollarSign.setAttribute('opacity', .8)      
             togBtn.appendChild(dollarSign)
       const titleCopy = _createText(_margin.left, _margin.top * 0.8, 'top-title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
             togBtn.appendChild(titleCopy)
