@@ -21,8 +21,8 @@
                    bigger_gap: _canvasHeight * _onGetRatio(22, null, _canvasHeight), big_gap: _canvasHeight * _onGetRatio(16, null, _canvasHeight),
                    sm_gap: _canvasHeight * _onGetRatio(12, null, _canvasHeight), smer_gap: _canvasHeight * _onGetRatio(10, null, _canvasHeight),
                    smst_gap: _canvasHeight * _onGetRatio(8, null, _canvasHeight)}
-  const _color = {mapLine: "#CCCCCC", mainBG: "#f9f9f9", subBG: "#FCFCFC", legend: "#303642", premiumPrice: "#F65E5D", resaleVolume: "#0382ed", rose: "#CC6666",
-                  msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD", blueGrey: "#3e485c", orange: "#F2DECE"}
+  const _color = {mapLine: "#CCCCCC", mainBG: "#f9f9f9", subBG: "#FCFCFC", legend: "#484f59", premiumPrice: "#F65E5D", resaleVolume: "#0382ed",
+                  msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD", blueGrey: "#484f59"}
   const _colorXScale = _canvasWidth - (_margin.left * 2) - _margin.right;
   let colorMapData = [], avgSumOfSold = 0;
   let flag4cluster = true;
@@ -311,9 +311,9 @@
             const legendBG = _createRect(0, 0, id = null, classes = null, bgW, bgH, legendColor)
                   legendBoxG.appendChild(legendBG)
             for (var q = 0; q < 5; q++) {
-                  const clusterFilter = _createText(_chart2.big_gap, _chart2.big_gap * 1.2 + (_chart2.sm_gap * q * 1.16), id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, _color.rose, textFilter[q])
+                  const clusterFilter = _createText(_chart2.big_gap, _chart2.big_gap * 1.2 + (_chart2.sm_gap * q * 1.16), id = null, 'smaller-body', textAnchor = null, dominantBaseline = null, _color.mainBG, textFilter[q])
                         legendBoxG.appendChild(clusterFilter)
-                  const clusterDescription = _createText(_margin.right * 1.2, _chart2.big_gap  * 1.2+ (_chart2.sm_gap * q * 1.16), id = null, 'smallest-body', textAnchor = null, dominantBaseline = null, _color.mainBG, textDescription[q])
+                  const clusterDescription = _createText(_margin.right * 1.2, _chart2.big_gap  * 1.2+ (_chart2.sm_gap * q * 1.16), id = null, 'smallest-body', textAnchor = null, dominantBaseline = null, _color.lightGrey, textDescription[q])
                         legendBoxG.appendChild(clusterDescription)
             }
             const titleTxtEl = _createText(bgW, _chart2.sm_gap * -0.4, 'legend-title', 'smallest-body', 'end', dominantBaseline = null, _color.text, title)
@@ -324,7 +324,7 @@
                   txt4DeltaE.setAttribute('x', _margin.left * 1.384);
                   txt4DeltaE.setAttribute('y', _margin.bottom)
                   txt4DeltaE.setAttribute('class', 'smaller-body')
-                  txt4DeltaE.innerHTML = `<a target="blank" fill="${_color.rose}" class="thin-biggest-body" xlink:href="http://zschuessler.github.io/DeltaE/learn/">٭</a>`
+                  txt4DeltaE.innerHTML = `<a target="blank" fill="${_color.blueGrey}" class="thin-biggest-body" xlink:href="http://zschuessler.github.io/DeltaE/learn/">٭</a>`
                   // txt4DeltaE.setAttribute('text-decoration', 'underline')
                   legendCopyG.appendChild(txt4DeltaE)
       } else {
@@ -533,33 +533,41 @@
             const toggleTxt1 = document.getElementById('delta-E')
             const toggleTxt2 = document.getElementById('release-date')
             const togCircle = document.getElementById('toggle-circle')
+            const topBG = document.getElementById('top-bg')
+            const topTitle = document.getElementById('top-title')
+            const topBody = document.getElementById('top-body')
+            const topDollar = document.getElementById('dollar-sign')
             document.getElementById('popup-chart-svg').setAttribute('display', 'none');
             if (isToggle) {
             gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:0, fill: _color.mapLine, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.legend, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});   
             gsap.to(toggleTxt2, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(topBG, {delay: 0.2, duration: 0.9, backgroundColor:"#e5e5e5", xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(topTitle, {delay: 0.2, duration: 0.9, fill: _color.text, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(topBody, {delay: 0.2, duration: 0.9, fill: _color.greyText, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             isToggle = false;
-            if (clusterGroup) {
-                  _removeAllChildNodes(document.getElementById('total-legend-group'));
-                  _createLegend(document.getElementById('total-legend-group'), 'colorDifference')
-                  _removeAllChildNodes(clusterGroup);
-                  _removeAllChildNodes(document.getElementById('detail-chart'));
-                  _createColorChart(target = null, dataPrimaryD)
-            }
+            _removeAllChildNodes(document.getElementById('total-legend-group'));
+            _createLegend(document.getElementById('total-legend-group'), 'colorDifference')
+            _removeAllChildNodes(clusterGroup);
+            _removeAllChildNodes(document.getElementById('detail-chart'));
+            _createColorChart(target = null, dataPrimaryD)
             } else {
             gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:252, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.mainBG, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(toggleTxt2, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:-36, ease: "power4.out", stagger: {from: 0, amount: 0.2}});    
+            gsap.to(toggleTxt2, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:-36, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(topBG, {delay: 0.2, duration: 0.9, backgroundColor: _color.blueGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(topTitle, {delay: 0.2, duration: 0.9, fill: _color.mainBG, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(topBody, {delay: 0.2, duration: 0.9, fill: _color.lightGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 0.14, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
             isToggle = true;
-            if (clusterGroup) {
-                  _removeAllChildNodes(document.getElementById('total-legend-group'));
-                  _createLegend(document.getElementById('total-legend-group'), 'releaseDate')
-                  _removeAllChildNodes(clusterGroup);
-                  _removeAllChildNodes(document.getElementById('detail-chart'));
-                  _createColorChart(target = null, dataReleaseD)
-            }
+            _removeAllChildNodes(document.getElementById('total-legend-group'));
+            _createLegend(document.getElementById('total-legend-group'), 'releaseDate')
+            _removeAllChildNodes(clusterGroup);
+            _removeAllChildNodes(document.getElementById('detail-chart'));
+            _createColorChart(target = null, dataReleaseD)
             }
     }
     function _OnInitPopUpChart(mapData) {
@@ -591,10 +599,10 @@
       const legendTitle = ['', 'Higher Resale Price than MSRP', 'Lower Resale Price than MSRP']
       for (var w = 1; w < 3; w++) {
             const bgX = w == 1 ? (w * _margin.right * 2.6) : (w * _margin.right * 2.6) + _margin.gap
-            const legendRect = _createRect(bgX, _margin.top * -0.34, 'popup-legend-bar', classes = null, _margin.left * 1.14, _margin.bottom, _color.orange)
+            const legendRect = _createRect(bgX, _margin.top * -0.34, 'popup-legend-bar', classes = null, _margin.left * 1.14, _margin.bottom, _color.blueGrey)
                   legendRect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
                   legendRect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
-                  legendRect.setAttribute('fill-opacity', 0.5)
+                  legendRect.setAttribute('fill-opacity', 0.1)
                   legendGroup.appendChild(legendRect);
             const legendtitleTxt = _createText(bgX + (_margin.left * 0.57), _margin.top * -0.1, id = null, 'smallest-body legend-title-txt', "middle", "hanging", _color.blueGrey, legendTitle[w])
                   legendGroup.appendChild(legendtitleTxt)
@@ -751,7 +759,7 @@
       const avgTradingLineX = detailWidth * (avgTradingValues/mapData.length) / maxAvgResalePrice
       const avgTradingtext = _createText(avgTradingLineX + _margin.left, _margin.bottom * 2.36, 'avg-trading-price', 'smallest-body', 'start', dominantBaseline = null, _color.msrp,  `Avg. Trading Price: $${(avgTradingValues/mapData.length).toFixed(0)}`) 
             if (mapData.length !== 1) popupMainSvg.appendChild(avgTradingtext);
-      const avg_Tradingline = _createLine(avgTradingLineX, avgTradingLineX, _margin.top * 1.52, (mapData.length + 1) * (_canvasHeight * _onGetRatio(47, null, _canvasHeight)), 'avg_guideline', classes = null, _color.premiumPrice, _canvasWidth * _onGetRatio(0.3, _canvasWidth, null), strokeOpacity = null)
+      const avg_Tradingline = _createLine(avgTradingLineX, avgTradingLineX, _margin.top * 1.52, (mapData.length + 1) * (_canvasHeight * _onGetRatio(47, null, _canvasHeight)), 'avg_guideline', classes = null, _color.greyText, _canvasWidth * _onGetRatio(0.3, _canvasWidth, null), strokeOpacity = null)
             avg_Tradingline.setAttribute('stroke-dasharray', _margin.gap * 0.1)
             if (mapData.length !== 1) avgGroup.appendChild(avg_Tradingline);
             popupContentSvg.appendChild(avgGroup);
@@ -914,11 +922,15 @@
       const toggleWidth = _canvasWidth * _onGetRatio(106, _canvasWidth, null)
       const togBtn = document.getElementById('toggle-button');
             togBtn.setAttribute('width', _canvasWidth);
-            togBtn.setAttribute('height', _canvasHeight * _onGetRatio(46, null, _canvasHeight));
-      const titleCopy = _createText(_margin.left, _margin.top, 'title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
+            togBtn.setAttribute('height', _canvasHeight * _onGetRatio(56, null, _canvasHeight));
+      const dollarSign = _createImage(_margin.left * 0.58, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(70, _canvasWidth, null), _canvasHeight * _onGetRatio(55, null, _canvasHeight))
+            togBtn.appendChild(dollarSign)
+      const titleCopy = _createText(_margin.left, _margin.top * 0.8, 'top-title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
             togBtn.appendChild(titleCopy)
+      const bodyCopy = _createText(_margin.left, _margin.top * 1.1, 'top-body', 'smaller-body', 'start', 'hanging', _color.greyText, 'Hint: Black is produced the most and got highest average price premium')
+            togBtn.appendChild(bodyCopy)
       const togGroup = document.createElementNS(_svgNS, 'g')
-            togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${0})`);
+            togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${_margin.top * 0.3})`);
       const togTxt1 = _createText(_canvasWidth * _onGetRatio(39, _canvasWidth, null), _chart2.big_gap * 1.3, 'delta-E', "smaller-body pointer", "start", dominantBaseline= null, _color.mapLine, 'Delta E (ΔE)')
             togTxt1.setAttribute('opacity', 1)
       const togTxt2 = _createText(_canvasWidth * _onGetRatio(34, _canvasWidth, null), _chart2.big_gap * 1.3, 'release-date', "smaller-body pointer", "start", dominantBaseline= null, _color.text, 'Release Date')
