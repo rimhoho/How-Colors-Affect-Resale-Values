@@ -925,7 +925,7 @@
             naviBar.setAttribute('height', _canvasHeight * _onGetRatio(70, null, _canvasHeight));
       const naviBg = _createRect(0, 0, 'navi-bg', classes = null, _canvasWidth, _canvasHeight * _onGetRatio(70, null, _canvasHeight), "#e5e5e5")
             naviBar.appendChild(naviBg)
-      const colorChart = _createImage(-2, 0, 'color-chart', classes = null, '/img/color-chart.svg', _canvasWidth * _onGetRatio(100, _canvasWidth, null), _canvasHeight * _onGetRatio(77, null, _canvasHeight))  
+      const colorChart = _createImage(-6, 0, 'color-chart', classes = null, '/img/color-chart.svg', _canvasWidth * _onGetRatio(100, _canvasWidth, null), _canvasHeight * _onGetRatio(77, null, _canvasHeight))  
             naviBar.appendChild(colorChart)
       const dollarSign = _createImage(_margin.left * 3.2, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(300, _canvasWidth, null), _canvasHeight * _onGetRatio(76, null, _canvasHeight))    
             naviBar.appendChild(dollarSign)
