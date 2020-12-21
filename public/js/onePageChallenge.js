@@ -537,8 +537,12 @@
             const topTitle = document.getElementById('top-title')
             const topBody = document.getElementById('top-body')
             const topDollar = document.getElementById('dollar-sign')
+            const colorChart1 = document.getElementById('color-chart1')
+            const colorChart2 = document.getElementById('color-chart2')
             document.getElementById('popup-chart-svg').setAttribute('display', 'none');
             if (isToggle) {
+            colorChart1.setAttribute('display', 'block')
+            colorChart2.setAttribute('display', 'none')
             gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:0, fill: _color.mapLine, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});   
@@ -554,6 +558,8 @@
             _removeAllChildNodes(document.getElementById('detail-chart'));
             _createColorChart(target = null, dataPrimaryD)
             } else {
+            colorChart1.setAttribute('display', 'none')
+            colorChart2.setAttribute('display', 'block')
             gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:252, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.mainBG, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
@@ -925,13 +931,17 @@
             naviBar.setAttribute('height', _canvasHeight * _onGetRatio(70, null, _canvasHeight));
       const naviBg = _createRect(0, 0, 'navi-bg', classes = null, _canvasWidth, _canvasHeight * _onGetRatio(70, null, _canvasHeight), "#e5e5e5")
             naviBar.appendChild(naviBg)
-      const colorChart = _createImage(-6, 0, 'color-chart', classes = null, '/img/color-chart.svg', _canvasWidth * _onGetRatio(100, _canvasWidth, null), _canvasHeight * _onGetRatio(77, null, _canvasHeight))  
-            naviBar.appendChild(colorChart)
+      const colorChart1 = _createImage(-6, 0, 'color-chart1', classes = null, '/img/color-chart.svg', _canvasWidth * _onGetRatio(100, _canvasWidth, null), _canvasHeight * _onGetRatio(77, null, _canvasHeight))  
+            colorChart1.setAttribute('display', 'block')
+            naviBar.appendChild(colorChart1)
+      const colorChart2 = _createImage(-6, 0, 'color-chart2', classes = null, '/img/color-chart-release-date.svg', _canvasWidth * _onGetRatio(100, _canvasWidth, null), _canvasHeight * _onGetRatio(77, null, _canvasHeight))  
+            colorChart2.setAttribute('display', 'none')      
+            naviBar.appendChild(colorChart2)
       const dollarSign = _createImage(_margin.left * 3.2, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(300, _canvasWidth, null), _canvasHeight * _onGetRatio(76, null, _canvasHeight))    
             naviBar.appendChild(dollarSign)
       const titleCopy = _createText(_margin.left, _margin.top * 1.2, 'top-title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
             naviBar.appendChild(titleCopy)
-      const bodyCopy = _createText(_margin.left, _margin.top * 1.4, 'top-body', 'smaller-body', 'start', 'hanging', _color.greyText, 'Hint: Black is produced the most and got highest average price premium')
+      const bodyCopy = _createText(_margin.left, _margin.top * 1.4, 'top-body', 'smaller-body', 'start', 'hanging', _color.greyText, 'Hint: Right next four colors get higher average price premium than other clusters.')
             naviBar.appendChild(bodyCopy)
       const togGroup = document.createElementNS(_svgNS, 'g')
             togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${_margin.top * 0.6})`);
