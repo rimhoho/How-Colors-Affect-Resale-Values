@@ -929,12 +929,12 @@
             naviBar.appendChild(colorChart)
       const dollarSign = _createImage(_margin.left * 3.2, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(300, _canvasWidth, null), _canvasHeight * _onGetRatio(76, null, _canvasHeight))    
             naviBar.appendChild(dollarSign)
-      const titleCopy = _createText(_margin.left, _margin.top * 0.8, 'top-title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
+      const titleCopy = _createText(_margin.left, _margin.top * 1.2, 'top-title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
             naviBar.appendChild(titleCopy)
-      const bodyCopy = _createText(_margin.left, _margin.top * 1.1, 'top-body', 'smaller-body', 'start', 'hanging', _color.greyText, 'Hint: Black is produced the most and got highest average price premium')
+      const bodyCopy = _createText(_margin.left, _margin.top * 1.4, 'top-body', 'smaller-body', 'start', 'hanging', _color.greyText, 'Hint: Black is produced the most and got highest average price premium')
             naviBar.appendChild(bodyCopy)
       const togGroup = document.createElementNS(_svgNS, 'g')
-            togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${_margin.top * 0.3})`);
+            togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${_margin.top * 0.6})`);
       const togTxt1 = _createText(_canvasWidth * _onGetRatio(39, _canvasWidth, null), _chart2.big_gap * 1.3, 'delta-E', "smaller-body pointer", "start", dominantBaseline= null, _color.mapLine, 'Delta E (ΔE)')
             togTxt1.setAttribute('opacity', 1)
       const togTxt2 = _createText(_canvasWidth * _onGetRatio(34, _canvasWidth, null), _chart2.big_gap * 1.3, 'release-date', "smaller-body pointer", "start", dominantBaseline= null, _color.text, 'Release Date')
