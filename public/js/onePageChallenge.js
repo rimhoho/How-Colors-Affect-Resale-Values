@@ -533,7 +533,7 @@
             const toggleTxt1 = document.getElementById('delta-E')
             const toggleTxt2 = document.getElementById('release-date')
             const togCircle = document.getElementById('toggle-circle')
-            const topBG = document.getElementById('top-bg')
+            const naviBar = document.getElementById('navi-bg')
             const topTitle = document.getElementById('top-title')
             const topBody = document.getElementById('top-body')
             const topDollar = document.getElementById('dollar-sign')
@@ -543,7 +543,7 @@
             gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});   
             gsap.to(toggleTxt2, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(topBG, {delay: 0.2, duration: 0.9, backgroundColor:"#e5e5e5", xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(naviBar, {delay: 0.2, duration: 0.9, fill:"#e5e5e5", xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(topTitle, {delay: 0.2, duration: 0.9, fill: _color.text, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
             gsap.to(topBody, {delay: 0.2, duration: 0.9, fill: _color.greyText, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
@@ -558,10 +558,10 @@
             gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.mainBG, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt2, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:-36, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(topBG, {delay: 0.2, duration: 0.9, backgroundColor: _color.blueGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(naviBar, {delay: 0.2, duration: 0.9, fill: _color.blueGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
             gsap.to(topTitle, {delay: 0.2, duration: 0.9, fill: _color.mainBG, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
             gsap.to(topBody, {delay: 0.2, duration: 0.9, fill: _color.lightGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 0.14, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 0.1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
             isToggle = true;
             _removeAllChildNodes(document.getElementById('total-legend-group'));
             _createLegend(document.getElementById('total-legend-group'), 'releaseDate')
@@ -920,16 +920,19 @@
       if (document.getElementById('toggle-button'))  _removeAllChildNodes(document.getElementById('toggle-button'));
       // create toggle btn
       const toggleWidth = _canvasWidth * _onGetRatio(106, _canvasWidth, null)
-      const togBtn = document.getElementById('toggle-button');
-            togBtn.setAttribute('width', _canvasWidth);
-            togBtn.setAttribute('height', _canvasHeight * _onGetRatio(56, null, _canvasHeight));
-      const dollarSign = _createImage(_margin.left * 0.58, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(70, _canvasWidth, null), _canvasHeight * _onGetRatio(55, null, _canvasHeight))
-            dollarSign.setAttribute('opacity', .6)      
-            togBtn.appendChild(dollarSign)
+      const naviBar = document.getElementById('navi-bar');
+            naviBar.setAttribute('width', _canvasWidth);
+            naviBar.setAttribute('height', _canvasHeight * _onGetRatio(70, null, _canvasHeight));
+      const naviBg = _createRect(0, 0, 'navi-bg', classes = null, _canvasWidth, _canvasHeight * _onGetRatio(70, null, _canvasHeight), "#e5e5e5")
+            naviBar.appendChild(naviBg)
+      const colorChart = _createImage(-2, 0, 'color-chart', classes = null, '/img/color-chart.svg', _canvasWidth * _onGetRatio(100, _canvasWidth, null), _canvasHeight * _onGetRatio(77, null, _canvasHeight))  
+            naviBar.appendChild(colorChart)
+      const dollarSign = _createImage(_margin.left * 3.2, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(300, _canvasWidth, null), _canvasHeight * _onGetRatio(76, null, _canvasHeight))    
+            naviBar.appendChild(dollarSign)
       const titleCopy = _createText(_margin.left, _margin.top * 0.8, 'top-title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
-            togBtn.appendChild(titleCopy)
+            naviBar.appendChild(titleCopy)
       const bodyCopy = _createText(_margin.left, _margin.top * 1.1, 'top-body', 'smaller-body', 'start', 'hanging', _color.greyText, 'Hint: Black is produced the most and got highest average price premium')
-            togBtn.appendChild(bodyCopy)
+            naviBar.appendChild(bodyCopy)
       const togGroup = document.createElementNS(_svgNS, 'g')
             togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${_margin.top * 0.3})`);
       const togTxt1 = _createText(_canvasWidth * _onGetRatio(39, _canvasWidth, null), _chart2.big_gap * 1.3, 'delta-E', "smaller-body pointer", "start", dominantBaseline= null, _color.mapLine, 'Delta E (ΔE)')
@@ -945,7 +948,7 @@
             togGroup.appendChild(togTxt1)
             togGroup.appendChild(togTxt2)
             togGroup.appendChild(togCircle)
-            togBtn.appendChild(togGroup)
+            naviBar.appendChild(togGroup)
       //popup bar chart page
       const mainSVG = document.createElementNS(_svgNS, 'svg');
             mainSVG.setAttribute('id', 'popup-chart-svg');
