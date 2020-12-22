@@ -938,7 +938,7 @@
             colorChart2.setAttribute('display', 'none')      
             naviBar.appendChild(colorChart2)
       const dollarSign = _createImage(_margin.left * 3.2, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(300, _canvasWidth, null), _canvasHeight * _onGetRatio(76, null, _canvasHeight))    
-            dollarSign.setAttribute('opacity', 0.14)      
+            dollarSign.setAttribute('opacity', 0.1)      
             naviBar.appendChild(dollarSign)
       const titleCopy = _createText(_margin.left, _margin.top * 1.2, 'top-title', 'title', 'start', dominantBaseline = null, _color.mainBG, 'How Colors Affect Resale Values')
             naviBar.appendChild(titleCopy)
