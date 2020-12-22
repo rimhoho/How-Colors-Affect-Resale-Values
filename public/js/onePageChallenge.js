@@ -544,13 +544,13 @@
             colorChart1.setAttribute('display', 'block')
             colorChart2.setAttribute('display', 'none')
             gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:0, fill: _color.mapLine, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.lightGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});   
             gsap.to(toggleTxt2, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(naviBar, {delay: 0.2, duration: 0.9, fill:"#e5e5e5", xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(topTitle, {delay: 0.2, duration: 0.9, fill: _color.text, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
-            gsap.to(topBody, {delay: 0.2, duration: 0.9, fill: _color.greyText, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(naviBar, {delay: 0.2, duration: 0.9, fill:_color.blueGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(topTitle, {delay: 0.2, duration: 0.9, fill: _color.mainBG, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(topBody, {delay: 0.2, duration: 0.9, fill: _color.lightGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 0.1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             isToggle = false;
             _removeAllChildNodes(document.getElementById('total-legend-group'));
             _createLegend(document.getElementById('total-legend-group'), 'colorDifference')
@@ -560,14 +560,14 @@
             } else {
             colorChart1.setAttribute('display', 'none')
             colorChart2.setAttribute('display', 'block')
-            gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:252, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.mainBG, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:252, fill: _color.mapLine, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.blueGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt2, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:-36, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(naviBar, {delay: 0.2, duration: 0.9, fill: _color.blueGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
-            gsap.to(topTitle, {delay: 0.2, duration: 0.9, fill: _color.mainBG, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
-            gsap.to(topBody, {delay: 0.2, duration: 0.9, fill: _color.lightGrey, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
-            gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 0.1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(naviBar, {delay: 0.2, duration: 0.9, fill: "#e5e5e5", xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(topTitle, {delay: 0.2, duration: 0.9, fill: _color.text, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
+            gsap.to(topBody, {delay: 0.2, duration: 0.9, fill: _color.greyText, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(topDollar, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}}); 
             isToggle = true;
             _removeAllChildNodes(document.getElementById('total-legend-group'));
             _createLegend(document.getElementById('total-legend-group'), 'releaseDate')
@@ -929,7 +929,7 @@
       const naviBar = document.getElementById('navi-bar');
             naviBar.setAttribute('width', _canvasWidth);
             naviBar.setAttribute('height', _canvasHeight * _onGetRatio(70, null, _canvasHeight));
-      const naviBg = _createRect(0, 0, 'navi-bg', classes = null, _canvasWidth, _canvasHeight * _onGetRatio(70, null, _canvasHeight), "#e5e5e5")
+      const naviBg = _createRect(0, 0, 'navi-bg', classes = null, _canvasWidth, _canvasHeight * _onGetRatio(70, null, _canvasHeight), _color.blueGrey)
             naviBar.appendChild(naviBg)
       const colorChart1 = _createImage(-6, 0, 'color-chart1', classes = null, '/img/color-chart.svg', _canvasWidth * _onGetRatio(100, _canvasWidth, null), _canvasHeight * _onGetRatio(77, null, _canvasHeight))  
             colorChart1.setAttribute('display', 'block')
@@ -938,22 +938,22 @@
             colorChart2.setAttribute('display', 'none')      
             naviBar.appendChild(colorChart2)
       const dollarSign = _createImage(_margin.left * 3.2, 0, 'dollar-sign', classes = null, '/img/dollar.svg', _canvasWidth * _onGetRatio(300, _canvasWidth, null), _canvasHeight * _onGetRatio(76, null, _canvasHeight))    
+            dollarSign.setAttribute('opacity', 0.14)      
             naviBar.appendChild(dollarSign)
-      const titleCopy = _createText(_margin.left, _margin.top * 1.2, 'top-title', 'title', 'start', dominantBaseline = null, _color.rose, 'How Colors Affect Resale Values')
+      const titleCopy = _createText(_margin.left, _margin.top * 1.2, 'top-title', 'title', 'start', dominantBaseline = null, _color.mainBG, 'How Colors Affect Resale Values')
             naviBar.appendChild(titleCopy)
-      const bodyCopy = _createText(_margin.left, _margin.top * 1.4, 'top-body', 'smaller-body', 'start', 'hanging', _color.greyText, 'Hint: Right next four colors get higher average price premium than other clusters.')
+      const bodyCopy = _createText(_margin.left, _margin.top * 1.4, 'top-body', 'smaller-body', 'start', 'hanging', _color.lightGrey, 'Hint: Right next four colors get higher average price premium than other clusters.')
             naviBar.appendChild(bodyCopy)
       const togGroup = document.createElementNS(_svgNS, 'g')
             togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${_margin.top * 0.6})`);
-      const togTxt1 = _createText(_canvasWidth * _onGetRatio(39, _canvasWidth, null), _chart2.big_gap * 1.3, 'delta-E', "smaller-body pointer", "start", dominantBaseline= null, _color.mapLine, 'Delta E (ΔE)')
+      const togTxt1 = _createText(_canvasWidth * _onGetRatio(39, _canvasWidth, null), _chart2.big_gap * 1.3, 'delta-E', "smaller-body pointer", "start", dominantBaseline= null, _color.text, 'Delta E (ΔE)')
             togTxt1.setAttribute('opacity', 1)
-      const togTxt2 = _createText(_canvasWidth * _onGetRatio(34, _canvasWidth, null), _chart2.big_gap * 1.3, 'release-date', "smaller-body pointer", "start", dominantBaseline= null, _color.text, 'Release Date')
+      const togTxt2 = _createText(_canvasWidth * _onGetRatio(34, _canvasWidth, null), _chart2.big_gap * 1.3, 'release-date', "smaller-body pointer", "start", dominantBaseline= null, _color.mapLine, 'Release Date')
             togTxt2.setAttribute('opacity', 0)
-      const togBody = _createRect(0, 0, 'toggle-body',  "pointer", toggleWidth, _canvasHeight * _onGetRatio(36, null, _canvasHeight), _color.legend)
-            togBody.setAttribute('fill-opacity', 0.9)
+      const togBody = _createRect(0, 0, 'toggle-body',  "pointer", toggleWidth, _canvasHeight * _onGetRatio(36, null, _canvasHeight), _color.lightGrey)
             togBody.setAttribute('rx', _canvasWidth * _onGetRatio(20, _canvasWidth, null))
             togBody.setAttribute('ry', _canvasWidth * _onGetRatio(20, _canvasWidth, null))
-      const togCircle = _createCircle(_margin.gap * 1.04, _chart2.big_gap * 1.14, 'toggle-circle', "pointer", _canvasWidth * _onGetRatio(13, _canvasWidth, null), _color.mapLine, 1, stroke=null, strokeWidth=null, strokeOpacity=null)
+      const togCircle = _createCircle(_margin.gap * 1.04, _chart2.big_gap * 1.14, 'toggle-circle', "pointer", _canvasWidth * _onGetRatio(13, _canvasWidth, null), _color.mapLine, 1, _color.mapLine, _canvasHeight * _onGetRatio(1, null, _canvasHeight), strokeOpacity=null)
             togGroup.appendChild(togBody)
             togGroup.appendChild(togTxt1)
             togGroup.appendChild(togTxt2)
