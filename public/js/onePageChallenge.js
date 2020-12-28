@@ -605,11 +605,11 @@
       for (var w = 1; w < 3; w++) {
             const bgX = w == 1 ? (w * _margin.right * 2.6) : (w * _margin.right * 2.6) + _margin.gap
             const barColor = w == 1 ? _color.premiumPrice : _color.mapLine
-            const textColor = w == 1 ? "white" : _color.premiumPrice
+            const textColor = w == 1 ? "white" : _color.legend
             const legendRect = _createRect(bgX, _margin.top * -0.34, 'popup-legend-bar', classes = null, _margin.left * 1.14, _margin.bottom, barColor)
                   legendRect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
                   legendRect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
-                  legendRect.setAttribute('fill-opacity', 0.92)
+                  legendRect.setAttribute('fill-opacity', 0.9)
                   legendGroup.appendChild(legendRect);
             const legendtitleTxt = _createText(bgX + (_margin.left * 0.57), _margin.top * -0.1, id = null, 'smallest-body legend-title-txt', "middle", "hanging", textColor, legendTitle[w])
                   legendGroup.appendChild(legendtitleTxt)
