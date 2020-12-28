@@ -504,7 +504,6 @@
       })
       _checkEventOnCluster(mapData)
     }
-    
     function _checkEventOnCluster(mapData) {
       const clusterBar = document.querySelectorAll('.cluster-bar')
       clusterBar.forEach(item => {
@@ -543,7 +542,7 @@
             if (isToggle) {
             colorChart1.setAttribute('display', 'block')
             colorChart2.setAttribute('display', 'none')
-            gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:0, fill: _color.mapLine, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
+            gsap.to(togCircle, {delay: 0.2, duration: 0.9, boxShadow: "0 30px 12px -6px #777", xPercent:0, fill: _color.mainBG, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(togBody, {delay: 0.1, duration: 0.9, fill: _color.lightGrey, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
             gsap.to(toggleTxt1, {delay: 0.2, duration: 0.9, opacity: 1, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});   
             gsap.to(toggleTxt2, {delay: 0.1, duration: 0.5, opacity: 0, xPercent:0, ease: "power4.out", stagger: {from: 0, amount: 0.2}});
@@ -580,7 +579,7 @@
       const popupWidth = _canvasWidth - (_margin.left * 1.96)
       // bg
       const popupChart = document.getElementById('popup-chart')
-      const sec1RectBg = _createRect(-_margin.left, _canvasHeight * -0.6, 'outside-popup-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, "black")
+      const sec1RectBg = _createRect(-_margin.left, _canvasHeight * -0.6, 'outside-popup-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, _color.blueGrey)
             sec1RectBg.setAttribute('fill-opacity', 0.38)
             popupChart.appendChild(sec1RectBg);
       const sec1Rect = _createRect(0, 0, 'popup-BG', classes = null, popupWidth, _canvasHeight * 0.4, "white")
@@ -602,20 +601,21 @@
             legendGroup.setAttribute('id', 'popup-legend-group')
             legendGroup.setAttribute('transform', `translate(${popupWidth - _margin.left * 4}, ${_margin.top * 0.92})`)
             popupMainSvg.appendChild(legendGroup)
-      const legendTitle = ['', 'Higher Resale Price than MSRP', 'Lower Resale Price than MSRP']
+      const legendTitle = ['', '"Higher" Resale Price than MSRP', '"Lower" Resale Price than MSRP']
       for (var w = 1; w < 3; w++) {
             const bgX = w == 1 ? (w * _margin.right * 2.6) : (w * _margin.right * 2.6) + _margin.gap
-            const legendRect = _createRect(bgX, _margin.top * -0.34, 'popup-legend-bar', classes = null, _margin.left * 1.14, _margin.bottom, _color.blueGrey)
+            const barColor = w == 1 ? _color.premiumPrice : _color.mapLine
+            const textColor = w == 1 ? "white" : _color.premiumPrice
+            const legendRect = _createRect(bgX, _margin.top * -0.34, 'popup-legend-bar', classes = null, _margin.left * 1.14, _margin.bottom, barColor)
                   legendRect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
                   legendRect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
-                  legendRect.setAttribute('fill-opacity', 0.1)
+                  legendRect.setAttribute('fill-opacity', 0.92)
                   legendGroup.appendChild(legendRect);
-            const legendtitleTxt = _createText(bgX + (_margin.left * 0.57), _margin.top * -0.1, id = null, 'smallest-body legend-title-txt', "middle", "hanging", _color.blueGrey, legendTitle[w])
+            const legendtitleTxt = _createText(bgX + (_margin.left * 0.57), _margin.top * -0.1, id = null, 'smallest-body legend-title-txt', "middle", "hanging", textColor, legendTitle[w])
                   legendGroup.appendChild(legendtitleTxt)
       }
       for (var k = 1; k < 3; k++) {
-            const barColor = k == 1 ? _color.premiumPrice : _color.lightGrey
-            const legendBar = _createRect(_margin.right * 2.9 * k, _margin.top * 0.4, "popup-legend-bar" , classes = null, _margin.gap * 6.4, _chart2.smst_gap * 0.6, barColor)
+            const legendBar = _createRect(_margin.right * 2.9 * k, _margin.top * 0.4, "popup-legend-bar" , classes = null, _margin.gap * 6.4, _chart2.smst_gap * 0.8, "white")
                   legendGroup.appendChild(legendBar)
             let colorTxts, textOrder;
             const textContent = ['MSRP', 'Lowest Resale $', 'Highest Resale $']
@@ -626,7 +626,7 @@
                         textOrder = textContent[j]
                         if (j == 0) colorTxts = _color.legend
                         else if (j == 1) colorTxts = _color.resaleVolume
-                        else colorTxts = _color.premiumPrice
+                        else colorTxts = "white"//_color.premiumPrice
                   } else {
                         textX = j != 2 ? (_margin.left * 2.8) + (_margin.right * j) : _margin.left * 3.44
                         textOrder = otehrTextContent[j]
@@ -638,17 +638,22 @@
                         legendGroup.appendChild(legendTxts)
             }
             const colorOrder = [_color.legend, _color.resaleVolume]
-            const otehrColorOrder = [_color.resaleVolume, _color.premiumPrice]
+            const otherColorOrder = [_color.resaleVolume, _color.premiumPrice]
             for (var i = 0; i < 2; i++) {
-                  const colorLine = k == 1 ? colorOrder[i] : otehrColorOrder[i]
+                  const colorLine = k == 1 ? colorOrder[i] : otherColorOrder[i]
                   const startLine = k == 1 ? (_margin.left * 1.3) + (_margin.gap * 1.6 * i) : (_margin.left * 1.3 * k) + (_margin.gap * 1.6 * i)
-                  const legendLines = _createLine(startLine, startLine, _margin.top * 0.4, _margin.top * 0.56, 'legend-line', classes = null, colorLine, _canvasWidth * _onGetRatio(0.8, _canvasWidth, null), "1")
+                  const legendLines = _createLine(startLine, startLine, _margin.top * 0.4, _margin.top * 0.64, 'legend-line', classes = null, colorLine, _canvasWidth * _onGetRatio(0.8, _canvasWidth, null), "1")
                         legendGroup.appendChild(legendLines)
             }
       }
-      
       _OnTweenBarChart(mapData, 'tradingRange')
-      // call triger animation
+      // call landscaped sneakers popup detail
+      sec0XBtn.addEventListener("click", (e)=> {
+            console.log('click')
+            // _removeAllChildNodes(document.getElementById('popup-landscaped-chart'));
+            // document.getElementById('popup-chart-svg').setAttribute('display', 'none')
+      })
+      // call trigger animation
       const Xbutton = document.getElementById('x-button-black')
       Xbutton.addEventListener("click", (e)=> {
             _removeAllChildNodes(document.getElementById('popup-chart'));
@@ -773,7 +778,6 @@
       const sec2xAxisTxt = _createXAxis(maxTradingHigh + 15, 50, detailWidth)
             popupMainSvg.appendChild(sec2xAxisTxt)
     }
-    
     function _onInitDetailInfos(sneakersData) {
       const mouseX = _canvasWidth/2.4 //pageX >= 760 ? pageX - _margin.right - _canvasWidth * _onGetRatio(226, _canvasWidth, null) : pageX + _margin.right
       const mouseY = _canvasHeight/3.2//pageY >= 580 ? pageY - (_margin.bottom * 5.4) : pageY - (_margin.top * 1.1)
@@ -783,7 +787,7 @@
             detailOutBg.setAttribute('id', 'outside-detail-BG-group');
             detailOutBg.setAttribute('transform', `translate(${-mouseX}, ${-mouseY})`);
             detailInfos.appendChild(detailOutBg)
-      const sec0RectBg = _createRect(0, 0, 'outside-detail-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, "black")
+      const sec0RectBg = _createRect(0, 0, 'outside-detail-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, _color.blueGrey)
             sec0RectBg.setAttribute('fill-opacity', 0.4)
             detailOutBg.appendChild(sec0RectBg);
       const sec0RectBG1 = _createRect(0, 0, 'detail-BG1', classes = null, _canvasWidth * _onGetRatio(264, _canvasWidth, null), _canvasHeight * _onGetRatio(588, null, _canvasHeight), `rgb(${sneakersData.fullRGB[0].replaceAll(' ', ', ')})`)
@@ -915,7 +919,6 @@
             document.getElementById('detail-infos-svg').setAttribute('display', 'none');
       })
     }
-
     // remove children nodes from parent
     function _removeAllChildNodes(parent) {
       while (parent.firstChild) parent.removeChild(parent.firstChild);
@@ -953,7 +956,7 @@
       const togBody = _createRect(0, 0, 'toggle-body',  "pointer", toggleWidth, _canvasHeight * _onGetRatio(36, null, _canvasHeight), _color.lightGrey)
             togBody.setAttribute('rx', _canvasWidth * _onGetRatio(20, _canvasWidth, null))
             togBody.setAttribute('ry', _canvasWidth * _onGetRatio(20, _canvasWidth, null))
-      const togCircle = _createCircle(_margin.gap * 1.04, _chart2.big_gap * 1.14, 'toggle-circle', "pointer", _canvasWidth * _onGetRatio(13, _canvasWidth, null), _color.mapLine, 1, _color.mapLine, _canvasHeight * _onGetRatio(1, null, _canvasHeight), strokeOpacity=null)
+      const togCircle = _createCircle(_margin.gap * 1.04, _chart2.big_gap * 1.14, 'toggle-circle', "pointer", _canvasWidth * _onGetRatio(13, _canvasWidth, null), _color.mainBG, "1", stroke=null, _canvasHeight * _onGetRatio(1, null, _canvasHeight), strokeOpacity=null)
             togGroup.appendChild(togBody)
             togGroup.appendChild(togTxt1)
             togGroup.appendChild(togTxt2)
