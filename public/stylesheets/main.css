@@ -27,7 +27,6 @@ div, svg {margin: 0; padding: 0;}
 .detail-BG {min-width: 254px;}
 
 .pointer {cursor: pointer;}
-
 /* width */
 ::-webkit-scrollbar {width: 0.5rem;height: 0.5rem;}
 ::-webkit-scrollbar-track {background: #F9F9F9; }

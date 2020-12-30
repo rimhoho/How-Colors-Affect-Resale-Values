@@ -21,8 +21,8 @@
                    bigger_gap: _canvasHeight * _onGetRatio(22, null, _canvasHeight), big_gap: _canvasHeight * _onGetRatio(16, null, _canvasHeight),
                    sm_gap: _canvasHeight * _onGetRatio(12, null, _canvasHeight), smer_gap: _canvasHeight * _onGetRatio(10, null, _canvasHeight),
                    smst_gap: _canvasHeight * _onGetRatio(8, null, _canvasHeight)}
-  const _color = {mapLine: "#CCCCCC", mainBG: "#f9f9f9", subBG: "#FCFCFC", legend: "#484f59", premiumPrice: "#F65E5D", resaleVolume: "#0382ed",
-                  msrp: "#808080", text: "#303642", greyText: '#8C8C8C', lightGrey: "#B2B2B2", popupBG: "#FDFDFD", blueGrey: "#484f59"}
+  const _color = {mapLine: "#cccccc", mainBG: "#f9f9f9", subBG: "#f4f4f4", legend: "#484f59", premiumPrice: "#F65E5D", premiumLowPrice: "#0382ed",
+                  resaleVolume: "#ffd62c", msrp: "#808080", text: "#303642", greyText: '#a5a5a5', lightGrey: "#d8d8d8", popupBG: "#FDFDFD", blueGrey: "#484f59"}
   const _colorXScale = _canvasWidth - (_margin.left * 2) - _margin.right;
   let colorMapData = [], avgSumOfSold = 0;
   let flag4cluster = true;
@@ -55,7 +55,9 @@
     let maxTradingHigh = 0, maxSoldNum = 0;
     let minAvgResalePrice = 200
     let maxAvgResalePrice = 1000
-  
+    let maxNumOfBids = 844
+    let maxNumOfAsks = 3278
+
     colorDistance.filter((obj, index) => {
       avgOfSold = Math.round(avgSumOfSold/stockX.length);
       stockX.forEach((d, i) => {
@@ -64,6 +66,8 @@
           maxSoldNum = maxSoldNum < d.number_of_sales ? d.number_of_sales : maxSoldNum
           maxAvgResalePrice = d.trade_range_high > maxAvgResalePrice ? d.trade_range_high : maxAvgResalePrice
           minAvgResalePrice = d.trade_range_low < minAvgResalePrice ? d.trade_range_low : minAvgResalePrice
+          maxNumOfBids = d.number_of_Bids > maxNumOfBids ? d.number_of_Bids : maxNumOfBids
+          maxNumOfAsks = d.number_of_Asks > maxNumOfAsks ? d.number_of_Asks : maxNumOfAsks
           
           colorMapData.push({'range_category': d.category,
                              'shorten_title': d.shorten_title,
@@ -436,14 +440,14 @@
               textY = (_chart2.height * 1.22) + (_canvasHeight * _onGetRatio(16, null, _canvasHeight) * (countCluster - (arr_countCluster[index] - arr_countCluster[index - 1])/2))
               tooltipTxt = index != 0 ? d.difference_primary.toFixed(1) : 0
               sneakersX = _margin.left + xScaledSumGap + xScaledSumWidth
-              colorBG = _color.subBG
+              colorBG = _color.mainBG
             } else {
               clusterBarheight = _canvasHeight * _onGetRatio(50, null, _canvasHeight) * (index + 1)
               imageY = (_chart2.height * 1.1) + _canvasHeight * _onGetRatio(50, null, _canvasHeight) * index
               textY = (_chart2.height * 1.27) + _canvasHeight * _onGetRatio(50, null, _canvasHeight) * index
               tooltipTxt = d.release_MY
               sneakersX = _margin.left + xScaledSumGap + xScaledSumWidth + (clusterD.width/1.8)
-              colorBG = _color.subBG
+              colorBG = _color.mainBG
             }
             // add Sneakers Bar
             if (clusterBarheight) {
@@ -510,22 +514,22 @@
         item.addEventListener("click", (e)=> {
           document.getElementById('popup-chart-svg').setAttribute('display', 'block');
           const index = parseInt(e.target.id.replaceAll(/cluster/gi, ''))
-          _OnInitPopUpChart(mapData[index].values)
+          _onInitPopUpChart(mapData[index].values)
         })
       })
       const detailBar = document.querySelectorAll('.sneakers-img')
       detailBar.forEach(item => {
         item.addEventListener("click", (e)=> {
-          document.getElementById('detail-infos-svg').setAttribute('display', 'block');
+          document.getElementById('detail-vertical-infos-svg').setAttribute('display', 'block');
           const index = parseInt(e.target.id.split('_')[0].replaceAll(/cluster/gi, ''))
           const title = e.target.id.split('_')[1]
           mapData[index].values.forEach(d => {
             const sneakersData = d.title == title && d
             clusterOnClicked = true
-            if (sneakersData != false) _onInitDetailInfos(sneakersData)
+            if (sneakersData != false) _onInitDetailVertical(sneakersData)
           })
         })
-      })
+      })      
     }
     function _checkEventOnToggleBtn(e) {
             const togBody = document.getElementById('toggle-body')
@@ -575,8 +579,9 @@
             _createColorChart(target = null, dataReleaseD)
             }
     }
-    function _OnInitPopUpChart(mapData) {
-      const popupWidth = _canvasWidth - (_margin.left * 1.96)
+
+    function _onInitPopUpChart(mapData) {
+      const popupWidth = _canvasWidth - (_margin.left * 2)
       // bg
       const popupChart = document.getElementById('popup-chart')
       const sec1RectBg = _createRect(-_margin.left, _canvasHeight * -0.6, 'outside-popup-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, _color.blueGrey)
@@ -599,60 +604,49 @@
       // legend
       const legendGroup = document.createElementNS(_svgNS, 'g');
             legendGroup.setAttribute('id', 'popup-legend-group')
-            legendGroup.setAttribute('transform', `translate(${popupWidth - _margin.left * 4}, ${_margin.top * 0.92})`)
+            legendGroup.setAttribute('transform', `translate(${popupWidth - (_margin.left * 3.3) + (_margin.gap * 0.4)}, ${_margin.top * 0.4})`)
             popupMainSvg.appendChild(legendGroup)
-      const legendTitle = ['', '"Higher" Resale Price than MSRP', '"Lower" Resale Price than MSRP']
-      for (var w = 1; w < 3; w++) {
-            const bgX = w == 1 ? (w * _margin.right * 2.6) : (w * _margin.right * 2.6) + _margin.gap
-            const barColor = w == 1 ? _color.premiumPrice : _color.mapLine
-            const textColor = w == 1 ? "white" : _color.legend
-            const legendRect = _createRect(bgX, _margin.top * -0.34, 'popup-legend-bar', classes = null, _margin.left * 1.14, _margin.bottom, barColor)
+      const legendTitle = ['Bar Color', 'Text Color']
+      const legendLeft = ['Higher Resale $ than MSRP', 'Lower Resale $ than MSRP']
+      for (var t = 0; t < 2; t++) {
+            const barLeftColor = t == 1 ? _color.greyText : _color.premiumPrice
+            const legendRect = _createRect(t * _margin.left * 1.5 - (_margin.gap * 0.4), _margin.gap * 0.4, 'popup-legend-bar', classes = null, _margin.left * 1.46, _margin.bottom * 0.9, _color.lightGrey)
                   legendRect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
                   legendRect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
-                  legendRect.setAttribute('fill-opacity', 0.9)
+                  legendRect.setAttribute('opacity', 0.5);
                   legendGroup.appendChild(legendRect);
-            const legendtitleTxt = _createText(bgX + (_margin.left * 0.57), _margin.top * -0.1, id = null, 'smallest-body legend-title-txt', "middle", "hanging", textColor, legendTitle[w])
-                  legendGroup.appendChild(legendtitleTxt)
-      }
-      for (var k = 1; k < 3; k++) {
-            const legendBar = _createRect(_margin.right * 2.9 * k, _margin.top * 0.4, "popup-legend-bar" , classes = null, _margin.gap * 6.4, _chart2.smst_gap * 0.8, "white")
+            const legendTitleTxt = _createText(t * _margin.left * 1.5, _chart2.big_gap, id = null, 'legend-body bold legend-title-txt', "start", "hanging", _color.text, legendTitle[t])
+                  legendGroup.appendChild(legendTitleTxt)
+            const legendLeftTxt = _createText(_margin.left * 0.7 * t, _chart2.big_gap * 2.44, id = null, 'legend-body legend-title-txt', "start", "hanging", _color.text, legendLeft[t])
+                  legendGroup.appendChild(legendLeftTxt)
+            const legendBG = _createRect(_margin.left * 0.7 * t, _chart2.big_gap * 1.8, id = null, classes = null, _margin.gap * 3, _chart2.smst_gap * 0.8, _color.lightGrey)
+                  legendGroup.appendChild(legendBG)
+            const legendBar = _createRect(_margin.gap * 2.4 + (_margin.left * 0.7 * t), _chart2.big_gap * 1.8, id = null, classes = null, _margin.gap * 2, _chart2.smst_gap * 0.8, barLeftColor)
                   legendGroup.appendChild(legendBar)
-            let colorTxts, textOrder;
-            const textContent = ['MSRP', 'Lowest Resale $', 'Highest Resale $']
-            const otehrTextContent = ['Lowest Resale $', 'Highest Resale $', 'MSRP']
-            for (var j = 0; j < 3; j++) {
-                  if (k == 1) {
-                        textX = (_margin.left * 1.33) + (_margin.right * j)
-                        textOrder = textContent[j]
-                        if (j == 0) colorTxts = _color.legend
-                        else if (j == 1) colorTxts = _color.resaleVolume
-                        else colorTxts = "white"//_color.premiumPrice
-                  } else {
-                        textX = j != 2 ? (_margin.left * 2.8) + (_margin.right * j) : _margin.left * 3.44
-                        textOrder = otehrTextContent[j]
-                        if (j == 0) colorTxts = _color.resaleVolume
-                        else if (j == 1) colorTxts = _color.premiumPrice
-                        else colorTxts = _color.legend
-                  }
-                  const legendTxts = _createText(textX, _margin.top * 0.78, id = null, "legend-body", "end", 'hanging', colorTxts, textOrder)
-                        legendGroup.appendChild(legendTxts)
-            }
-            const colorOrder = [_color.legend, _color.resaleVolume]
-            const otherColorOrder = [_color.resaleVolume, _color.premiumPrice]
-            for (var i = 0; i < 2; i++) {
-                  const colorLine = k == 1 ? colorOrder[i] : otherColorOrder[i]
-                  const startLine = k == 1 ? (_margin.left * 1.3) + (_margin.gap * 1.6 * i) : (_margin.left * 1.3 * k) + (_margin.gap * 1.6 * i)
-                  const legendLines = _createLine(startLine, startLine, _margin.top * 0.4, _margin.top * 0.64, 'legend-line', classes = null, colorLine, _canvasWidth * _onGetRatio(0.8, _canvasWidth, null), "1")
-                        legendGroup.appendChild(legendLines)
-            }
       }
-      _OnTweenBarChart(mapData, 'tradingRange')
-      // call landscaped sneakers popup detail
-      sec0XBtn.addEventListener("click", (e)=> {
-            console.log('click')
-            // _removeAllChildNodes(document.getElementById('popup-landscaped-chart'));
-            // document.getElementById('popup-chart-svg').setAttribute('display', 'none')
-      })
+      const legendTop = ['Retail Price', 'Lowest', 'Highest']
+      const legendBottom = ['(MSRP)', 'Resale Price', 'Resale Price']
+      const retailSymbol = _createImage(_margin.left * 1.5, _chart2.big_gap * 2, 'dollar-symbol', "pointer", `img/dollar-symbol.svg`, _canvasWidth * _onGetRatio(11, _canvasWidth, null), height = null)
+            legendGroup.appendChild(retailSymbol);
+      for (var w = 0; w < 3; w++) {
+            const barTxtX = w == 0 ? (_margin.left * 1.5) + (_margin.gap * 0.76) : (_margin.left * 1.65) + (_margin.gap * 2.714) * w
+            const barRightColor = w == 1 ? _color.premiumLowPrice : _color.premiumPrice
+            const legendRightBar = _createRect((_margin.left * 1.5) + (_margin.gap * 3) * w, _chart2.big_gap * 2.1, id = null, classes = null, _margin.gap * 0.4, _chart2.smst_gap, barRightColor)
+                  if (w != 0) legendGroup.appendChild(legendRightBar)
+            const legendRightTopTxt = _createText(barTxtX, _chart2.big_gap * 1.8, id = null, 'legend-body legend-title-txt', "start", "hanging", _color.blueGrey, legendTop[w])
+            const legendRightBottomTxt = _createText(barTxtX, _chart2.big_gap * 2.4, id = null, 'legend-body legend-title-txt', "start", "hanging", _color.blueGrey, legendBottom[w])
+                  legendGroup.appendChild(legendRightTopTxt)
+                  legendGroup.appendChild(legendRightBottomTxt)
+      }
+      // create empty detail-horizontal-info
+      const detailSVG = document.createElementNS(_svgNS, 'svg');
+            detailSVG.setAttribute('id', 'detail-horizontal-infos-svg');
+            detailSVG.setAttribute('width', _canvasWidth);
+            detailSVG.setAttribute('height', _canvasHeight * 0.896);
+            detailSVG.setAttribute('class', 'top');
+            popupChart.appendChild(detailSVG)
+      // create bar chart
+      _onTweenBarChart(mapData, 'tradingRange')
       // call trigger animation
       const Xbutton = document.getElementById('x-button-black')
       Xbutton.addEventListener("click", (e)=> {
@@ -665,7 +659,7 @@
             document.getElementById('popup-chart-svg').setAttribute('display', 'none')
       })
     }
-    function _OnTweenBarChart(mapData) {
+    function _onTweenBarChart(mapData) {
       const svgHeight = mapData.length <= 7 ? _canvasHeight * 0.4 - (_margin.bottom * 2) - (_margin.top * 1.2) : mapData.length * (_canvasHeight * _onGetRatio(50, null, _canvasHeight))
       const popupMainSvg = document.getElementById('popup-main-svg')
       const popupWidth = _canvasWidth - (_margin.left * 2) + _margin.gap * 0.5
@@ -701,30 +695,35 @@
             popUpBarGroup.setAttribute('id', 'popup-bar-group')
             popUpBarGroup.setAttribute('transform', `translate(${_margin.right * 2.1}, ${_margin.top * 0.7})`)
             popupContentSvg.appendChild(popUpBarGroup)
-    
-      let avgTradingValues = 0, avgResaleValues = 0;
+      let avgTradingValues = 0;
       // bar chart content
       mapData.forEach((sneakersData, i) => {
             const tradingBarWidth = detailWidth * sneakersData.range_trade_high / maxAvgResalePrice
             const imageStartX = (sneakersData.shorten_title == 'Turtledove') ? (detailWidth * sneakersData.range_trade_high / maxAvgResalePrice) * 0.92 : (detailWidth * sneakersData.range_trade_high / maxAvgResalePrice) * 0.95
             const tradingBarContent = [`$${(sneakersData.retail_price).toLocaleString()}`, `$${(sneakersData.range_trade_low).toLocaleString()}`, `$${(sneakersData.range_trade_high).toLocaleString()}`]
-            const barColor = sneakersData.range_trade_high < sneakersData.retail_price ? _color.mapLine : _color.premiumPrice
+            const barColor = sneakersData.range_trade_high < sneakersData.retail_price ? _color.greyText : _color.premiumPrice
             // add Bar chart
-            const popUpPremiumChart = _createRect(0, (_margin.top * i * 1.42), id = null, "detail-info-bar-primary", tradingBarWidth, _chart2.big_gap, barColor)
+            const popUpPremiumChart = _createRect(0, _margin.top * i * 1.42, id = null, "detail-info-bar-primary", tradingBarWidth, _chart2.big_gap, _color.subBG)
                   popUpBarGroup.appendChild(popUpPremiumChart)  
+            const tradingPriceBar = _createRect(detailWidth * sneakersData.range_trade_low / maxAvgResalePrice, _margin.top * i * 1.42, id = null, classes = null, tradingBarWidth - detailWidth * sneakersData.range_trade_low / maxAvgResalePrice, _chart2.big_gap, barColor)
+                  popUpBarGroup.appendChild(tradingPriceBar)
+            // add Retail Price Symbol
+            const popupRetailPriceImg = _createImage((detailWidth * sneakersData.retail_price / maxAvgResalePrice) - (_margin.gap * 0.7), (_margin.top * 0.05) + (_margin.top * i * 1.42), id = null, "retail-symbol", `img/dollar-symbol.svg`, _canvasWidth * _onGetRatio(13, _canvasWidth, null), height = null)
+                  popUpBarGroup.appendChild(popupRetailPriceImg)
+                  gsap.from(popupRetailPriceImg, {duration: 1, scale:0, ease: "power4.out", stagger: {from: 0, amount: 0.6}});
             // add bar text
             for (var t = 0; t < 3; t++) {
-                  let lineX, textX, textColor, textAnchorNew;
+                  let textX, textColor, textAnchorNew;
                   if (t == 0) {
-                        textX = lineX = detailWidth * sneakersData.retail_price / maxAvgResalePrice
-                        textColor = _color.legend
+                        textX = detailWidth * sneakersData.retail_price / maxAvgResalePrice
+                        textColor = _color.blueGrey
                         textY = (_margin.top * 0.6) + (_margin.top * i * 1.42)
                   } else if (t == 1) {
-                        textX = lineX = detailWidth * sneakersData.range_trade_low / maxAvgResalePrice
-                        textColor = _color.resaleVolume
+                        textX = detailWidth * sneakersData.range_trade_low / maxAvgResalePrice
+                        textColor = _color.premiumLowPrice
                         textY = (_margin.top * 0.6) + (_margin.top * i * 1.42)
                   } else {
-                        textX = lineX = detailWidth * sneakersData.range_trade_high / maxAvgResalePrice
+                        textX = detailWidth * sneakersData.range_trade_high / maxAvgResalePrice
                         textColor = _color.premiumPrice
                   }
                   if (t == 0 && sneakersData.range_trade_high < sneakersData.retail_price || t == 0 && sneakersData.range_trade_low < sneakersData.retail_price) textAnchorNew = 'start'
@@ -733,17 +732,17 @@
                   else if (t == 1 && sneakersData.range_trade_low < sneakersData.retail_price) textAnchorNew = 'end'
                   else if (t == 1 || t == 2 && sneakersData.range_trade_high - sneakersData.range_trade_low < _margin.gap) textAnchorNew = 'middle'
                   else textAnchorNew = 'start'
-                  const lowTradingPriceLine = _createLine(textX, textX, (_margin.top * 0) + (_margin.top * i * 1.42), (_margin.top * 0.53) + (_margin.top * i * 1.42), 'low-trading-price-line', classes = null, textColor, _canvasWidth * _onGetRatio(0.8, _canvasWidth, null), "1")
-                        if (t != 2 ) popUpBarGroup.appendChild(lowTradingPriceLine)
                   const tradingBarTxt = _createText(textX, (_margin.top * 0.6) + (_margin.top * i * 1.42), id = null, "smallest-body", textAnchorNew, 'hanging', textColor, tradingBarContent[t])
                         popUpBarGroup.appendChild(tradingBarTxt)
             }
             const txtStartX = (sneakersData.shorten_title == 'Turtledove') ? imageStartX - (_margin.right * 0.8) : imageStartX + (_margin.right * 1.1)
-            const resaleBarContent = _createText(txtStartX, (_margin.top * 0.3) + (_margin.top * i * 1.42), 'avg-major feature-value', 'smallest-body', 'start', dominantBaseline = null, _color.greyText, `Total Resale Vol. ${sneakersData.number_of_sales.toLocaleString()}`) 
+            const txtStartY = (sneakersData.shorten_title == 'Turtledove') ? (_margin.top * 0.2) + (_margin.top * i * 1.22) : (_margin.top * 0.3) + (_margin.top * i * 1.42)
+            const resaleBarContent = _createText(txtStartX, txtStartY, 'avg-major feature-value', 'smallest-body', 'start', dominantBaseline = null, _color.greyText, `Total Resale Vol. ${sneakersData.number_of_sales.toLocaleString()}`) 
                   popUpBarGroup.appendChild(resaleBarContent);
             // add sneakers image
-            const popupSneakerImg = _createImage(imageStartX, (_margin.top * -0.76) + (_margin.top * i * 1.42), id = null, "detail-info-thmnail", `img/${sneakersData.title}.png`, _canvasWidth * _onGetRatio(60, _canvasWidth, null), height = null)
+            const popupSneakerImg = _createImage(imageStartX, (_margin.top * -0.76) + (_margin.top * i * 1.42), `${sneakersData.range_cluster}_${sneakersData.title}`, "pop-up-thumnail pointer", `img/${sneakersData.title}.png`, _canvasWidth * _onGetRatio(60, _canvasWidth, null), height = null)
                   popUpBarGroup.appendChild(popupSneakerImg)
+                  gsap.from(popupSneakerImg, {duration: 1, x: -txtStartX, ease: "power4.out", stagger: {from: 0, amount: 0.6}});
             // yAxis text
             const txtGroupY = (i == 0) ? _margin.bottom * 1.14 : (_margin.bottom * 1.14) + (_margin.top * i * 1.42)
             const yaXisTxtGroup = _createText(0, txtGroupY, id = null, 'xAxisLabel', textAnchor = null, dominantBaseline = null, _color.text, textContent = null) 
@@ -758,7 +757,7 @@
                   } else {
                         yaXisText = sneakersData.release_MY
                         yaXisClass = 'smallest-body yaXisTxt'
-                        yaXisColor =_color.lightGrey
+                        yaXisColor =_color.mapLine
                   }
                   const yaXisTxtY = (j == 2) ? (_chart2.sm_gap * j) - _chart2.sm_gap : _chart2.sm_gap * j
                   const yaXisTxt = _createTspan(0, yaXisTxtY, id = null, yaXisClass, 'end', yaXisColor, yaXisText)
@@ -777,24 +776,37 @@
       // xAxis
       const sec2xAxisTxt = _createXAxis(maxTradingHigh + 15, 50, detailWidth)
             popupMainSvg.appendChild(sec2xAxisTxt)
+      // default sneakers detail info
+      _onInitDetailHorizon(mapData[0])
+      // Check sneakers has been clicked - if yes, show detail infos
+      const sneakersFromPopup = document.querySelectorAll('.pop-up-thumnail')
+      sneakersFromPopup.forEach(item => {
+            item.addEventListener("click", (e)=> {
+                  const horizontalSVG = document.getElementById('detail-horizontal-infos-svg')
+                  _removeAllChildNodes(horizontalSVG)
+                  mapData.forEach(dict => {
+                        if (dict.title == e.target.id.split('_')[1]) _onInitDetailHorizon(dict)
+                  })
+            })
+      })
     }
-    function _onInitDetailInfos(sneakersData) {
+    function _onInitDetailVertical(sneakersData) {
       const mouseX = _canvasWidth/2.4 //pageX >= 760 ? pageX - _margin.right - _canvasWidth * _onGetRatio(226, _canvasWidth, null) : pageX + _margin.right
       const mouseY = _canvasHeight/3.2//pageY >= 580 ? pageY - (_margin.bottom * 5.4) : pageY - (_margin.top * 1.1)
-      const detailInfos = document.getElementById('detail-chart')
+      const detailInfos = document.getElementById('detail-vertical-chart')
             detailInfos.setAttribute('transform', `translate(${mouseX}, ${mouseY})`);
       const detailOutBg = document.createElementNS(_svgNS, 'g');
-            detailOutBg.setAttribute('id', 'outside-detail-BG-group');
+            detailOutBg.setAttribute('id', 'outside-detail-vertical-BG-group');
             detailOutBg.setAttribute('transform', `translate(${-mouseX}, ${-mouseY})`);
             detailInfos.appendChild(detailOutBg)
-      const sec0RectBg = _createRect(0, 0, 'outside-detail-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, _color.blueGrey)
+      const sec0RectBg = _createRect(0, 0, 'outside-detail-vertical-BG', classes = null, _canvasWidth, _canvasHeight * 1.4, _color.blueGrey)
             sec0RectBg.setAttribute('fill-opacity', 0.4)
             detailOutBg.appendChild(sec0RectBg);
-      const sec0RectBG1 = _createRect(0, 0, 'detail-BG1', classes = null, _canvasWidth * _onGetRatio(264, _canvasWidth, null), _canvasHeight * _onGetRatio(588, null, _canvasHeight), `rgb(${sneakersData.fullRGB[0].replaceAll(' ', ', ')})`)
+      const sec0RectBG1 = _createRect(0, 0, 'detail-vertical-BG1', classes = null, _canvasWidth * _onGetRatio(264, _canvasWidth, null), _canvasHeight * _onGetRatio(588, null, _canvasHeight), `rgb(${sneakersData.fullRGB[0].replaceAll(' ', ', ')})`)
             sec0RectBG1.setAttribute('rx', _canvasWidth * _onGetRatio(12, _canvasWidth, null))
             sec0RectBG1.setAttribute('ry', _canvasWidth * _onGetRatio(12, _canvasWidth, null))
             detailInfos.appendChild(sec0RectBG1);
-      const sec0RectBG2 = _createRect(_margin.gap, _margin.bottom , 'detail-BG2', classes = null, _canvasWidth * _onGetRatio(224, _canvasWidth, null), _canvasHeight * _onGetRatio(516, null, _canvasHeight), "white")
+      const sec0RectBG2 = _createRect(_margin.gap, _margin.bottom , 'detail-vertical-BG2', classes = null, _canvasWidth * _onGetRatio(224, _canvasWidth, null), _canvasHeight * _onGetRatio(516, null, _canvasHeight), "white")
             sec0RectBG2.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
             sec0RectBG2.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
             detailInfos.appendChild(sec0RectBG2);
@@ -802,33 +814,30 @@
             sec0XSVG.setAttribute('class', 'top');
             sec0XSVG.setAttribute('transform', `translate(${_canvasWidth * _onGetRatio(226, _canvasWidth, null)}, ${-_margin.bottom})`);
             detailInfos.appendChild(sec0XSVG);
-      const sec0XBtn = _createImage(_margin.gap * -0.5, _margin.bottom * 1.1, 'x-button-white', "pointer", `img/x-button-white.svg`, _canvasWidth * _onGetRatio(42, _canvasWidth, null), _canvasWidth * _onGetRatio(42, _canvasWidth, null))
+      const sec0XBtn = _createImage(_margin.gap * -0.5, _margin.bottom * 1.1, 'x-vertical-button-white', "pointer", `img/x-button-white.svg`, _canvasWidth * _onGetRatio(42, _canvasWidth, null), _canvasWidth * _onGetRatio(42, _canvasWidth, null))
             sec0XSVG.appendChild(sec0XBtn);
       const colorText = _clusterNames[sneakersData.range_cluster] != "White" ? "white" : _color.lightGrey
       const sec0Text = _createText(_margin.gap, _margin.bottom * 0.64, id = null, "mideum-body", "start", dominantBaseline = null, colorText, `Color Cluster: ${_clusterNames[sneakersData.range_cluster]}`)
             detailInfos.appendChild(sec0Text)
       const secRect1Group = document.createElementNS(_svgNS, 'g')
-            secRect1Group.setAttribute('id', 'detail-content-01')
+            secRect1Group.setAttribute('id', 'detail-vertical-content-01')
             secRect1Group.setAttribute('transform', `translate(${_margin.gap * 2}, ${_margin.bottom * 0.9 * 1.8})`);
       const secRect2Group = document.createElementNS(_svgNS, 'g')
-            secRect2Group.setAttribute('id', 'detail-content-02')
+            secRect2Group.setAttribute('id', 'detail-vertical-content-02')
             secRect2Group.setAttribute('transform', `translate(${_margin.gap * 2}, ${_margin.bottom * 3.8 * 1.2})`);
       const secRect3Group = document.createElementNS(_svgNS, 'g')
-            secRect3Group.setAttribute('id', 'detail-content-03')
+            secRect3Group.setAttribute('id', 'detail-vertical-content-03')
             secRect3Group.setAttribute('transform', `translate(${_margin.gap * 2}, ${_margin.bottom * 6.2 * 1.12})`);
       const secRect4Group = document.createElementNS(_svgNS, 'g')
-            secRect4Group.setAttribute('id', 'detail-content-04')
-            secRect4Group.setAttribute('transform', `translate(${_margin.gap * 2}, ${_margin.bottom * 7.56 * 1.1})`);  
-      // const sec0RectBg = _createImage(0, 0, 'detail-shadow', classes = null, 'img/shadow.svg', _canvasWidth * _onGetRatio(258, _canvasWidth, null), _canvasHeight * _onGetRatio(540, null, _canvasHeight))
-      //       sec0RectBg.setAttribute('opacity', 0.4)
-      //       detailInfos.appendChild(sec0RectBg);
+            secRect4Group.setAttribute('id', 'detail-vertical-content-04')
+            secRect4Group.setAttribute('transform', `translate(${_margin.gap * 2}, ${_margin.bottom * 7.56 * 1.1})`);
 
       const detailWidth  = _canvasWidth * _onGetRatio(180, _canvasWidth, null)
       const sec1leftYTxt = [sneakersData.range_category, sneakersData.shorten_title]
       const sec1rightYTxt = [sneakersData.release_MY, `MSRP: $${sneakersData.retail_price}`]
       const stackedTxtLeft = _createStackedText(0, 0, sec1leftYTxt, "start", "big-body", _color.legend)
       const stackedTxtRight = _createStackedText(detailWidth, 0, sec1rightYTxt, "end", "smaller-body", _color.lightGrey)
-      const detailThmnail = _createImage(detailWidth * 0.1, _chart2.sm_gap, id = null, "detail-info-thmnail", `img/${sneakersData.title}.png`, detailWidth * 0.84,  _canvasHeight * _onGetRatio(125, null, _canvasHeight))
+      const detailThmnail = _createImage(detailWidth * 0.1, _chart2.sm_gap, id = null, "detail-vertical-info-thmnail", `img/${sneakersData.title}.png`, detailWidth * 0.84,  _canvasHeight * _onGetRatio(125, null, _canvasHeight))
             secRect1Group.appendChild(stackedTxtLeft)
             secRect1Group.appendChild(stackedTxtRight)
             secRect1Group.appendChild(detailThmnail)
@@ -842,9 +851,9 @@
       const sec2RightText = _createStackedText(detailWidth, 0, sec2rightYTxt, "end", "small-body", _color.text)
             secRect2Group.appendChild(sec2RightText)
       const arrowSymbol = (sneakersData.price_premium > 0.01) ? 'arrow_up' : 'arrow_down'
-      const detailSymbol = _createImage(0, _chart2.big_gap * 0.6, id = null, "detail-info-arrow", `img/${arrowSymbol}.svg`, _chart2.smst_gap, height = null)
+      const detailSymbol = _createImage(0, _chart2.big_gap * 0.6, id = null, "detail-vertical-info-arrow", `img/${arrowSymbol}.svg`, _chart2.smst_gap, height = null)
             secRect2Group.appendChild(detailSymbol)
-      const sec2BarBGChart = _createRect(0, _margin.bottom * 1.18, id = null, "detail-info-bar-bg", detailWidth, _chart2.smer_gap, _color.mapLine)
+      const sec2BarBGChart = _createRect(0, _margin.bottom * 1.18, id = null, "detail-vertical-info-bar-bg", detailWidth, _chart2.smer_gap, _color.mapLine)
             secRect2Group.appendChild(sec2BarBGChart)
       for (var t = 0; t < 2; t++) {
             const textX = t == 0 ? detailWidth * sneakersData.range_trade_low / maxAvgResalePrice : detailWidth * sneakersData.range_trade_high / maxAvgResalePrice
@@ -893,7 +902,7 @@
       const sec4ImgGroup = document.createElementNS(_svgNS, 'g')
             sec4ImgGroup.setAttribute('transform', `translate(0, ${_margin.bottom * 1.38})`);
             secRect4Group.appendChild(sec4ImgGroup)
-      const sec4HighlightImg = _createImage(0, 0, id = null, 'detail-info-color-code-img', `img/color_shade/${sneakersData.title}_code.png`, _canvasWidth * _onGetRatio(102, _canvasWidth, null),  _canvasHeight * _onGetRatio(58, null, _canvasHeight))
+      const sec4HighlightImg = _createImage(0, 0, id = null, 'detail-vertical-info-color-code-img', `img/color_shade/${sneakersData.title}_code.png`, _canvasWidth * _onGetRatio(102, _canvasWidth, null),  _canvasHeight * _onGetRatio(58, null, _canvasHeight))
             sec4ImgGroup.appendChild(sec4HighlightImg)
       for (var n = 0; n < 2; n++) {
             const rectColor = n == 0 ? `rgb(${sneakersData.fullRGB[0].replaceAll(' ', ', ')})` : `rgb(${sneakersData.fullRGB[1].replaceAll(' ', ', ')})`
@@ -908,17 +917,153 @@
       detailInfos.appendChild(secRect2Group)
       detailInfos.appendChild(secRect3Group)
       detailInfos.appendChild(secRect4Group)
-      const Xbutton = document.getElementById('x-button-white')
+      const Xbutton = document.getElementById('x-vertical-button-white')
       Xbutton.addEventListener("click", (e)=> {
-            _removeAllChildNodes(document.getElementById('detail-chart'));
-            document.getElementById('detail-infos-svg').setAttribute('display', 'none');
+            _removeAllChildNodes(document.getElementById('detail-vertical-chart'));
+            document.getElementById('detail-vertical-infos-svg').setAttribute('display', 'none');
       })
-      const detailSvg = document.getElementById('detail-infos-svg')
+      const detailSvg = document.getElementById('detail-vertical-infos-svg')
       detailSvg.addEventListener("click", (e)=> {
-            _removeAllChildNodes(document.getElementById('detail-chart'));
-            document.getElementById('detail-infos-svg').setAttribute('display', 'none');
+            _removeAllChildNodes(document.getElementById('detail-vertical-chart'));
+            document.getElementById('detail-vertical-infos-svg').setAttribute('display', 'none');
       })
     }
+    function _onInitDetailHorizon(sneakersData) {
+      let txtX, txtY, barWidth;
+      const detailMapY = _canvasHeight * 0.42
+      const detailMapWidth = _canvasWidth - (_margin.left * 2)
+      const detailMapHeight = _canvasHeight * 0.19 - _margin.bottom
+      const innerColumnWidth = (detailMapWidth / 4) - _margin.gap// _canvasWidth * _onGetRatio(176, _canvasWidth, null)
+      const innerColumnWidthEnd = innerColumnWidth - _margin.gap
+      const detailSVG = document.getElementById('detail-horizontal-infos-svg')
+      const detailInfos = document.createElementNS(_svgNS, 'g')
+            detailInfos.setAttribute('id', 'detail-horizontal-chart')
+            detailInfos.setAttribute('transform', `translate(${0}, ${detailMapY})`);
+            detailSVG.appendChild(detailInfos)
+      const sec1Rect = _createRect(0, 0, id = null, 'detail-horizontal-BG', detailMapWidth, detailMapHeight, _color.text)
+            sec1Rect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
+            sec1Rect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
+            detailInfos.appendChild(sec1Rect);
+      for (var i = 0; i < 4; i++) {
+            // grouping four columns
+            const secRectGroup = document.createElementNS(_svgNS, 'g')
+                  secRectGroup.setAttribute('id', `detail_group_${i+1}`)
+                  secRectGroup.setAttribute('transform', `translate(${(_margin.gap * 2) + (i * innerColumnWidth)}, ${_margin.top * 1.24})`);
+                  detailInfos.appendChild(secRectGroup)
+      }
+      // first column 
+      const firstGroup = document.getElementById('detail_group_1') 
+      const txt1Left = [sneakersData.range_category, sneakersData.shorten_title]
+      for (var i = 0; i < 3; i++) {
+            const firstClass = i == 1 ? "thin-biggest-body" : "big-body"
+            const stackedTxtLeft = _createText(0, _chart2.bigger_gap * i, id = null, firstClass,"start", dominantBaseline=null, _color.lightGrey, txt1Left[i])  
+                  firstGroup.appendChild(stackedTxtLeft)    
+      }
+      const stackedTxtRight = _createText(innerColumnWidthEnd, 0, id = null, "smallest-body", "end", dominantBaseline=null, _color.greyText, sneakersData.release_MY)
+            firstGroup.appendChild(stackedTxtRight) 
+      const detailThmnail = _createImage(0, _chart2.sm_gap, id = null, "detail-info-thmnail", `img/${sneakersData.title}.png`, innerColumnWidth - _margin.gap,  _canvasHeight * _onGetRatio(160, null, _canvasHeight))
+            firstGroup.appendChild(detailThmnail)
+      // second column 
+      const secondGroup = document.getElementById('detail_group_2') 
+      const txt2Left = ['Color Difference', sneakersData.difference_highlight, 'Delta E', '0']
+      const txt2Right = ['Base & Highlight', '', '', '100']
+      barWidth = innerColumnWidth * sneakersData.difference_highlight / 100;
+
+      for (var i = 0; i < 4; i++) {
+            let secClass;
+            if (i == 1) secClass = "thin-biggest-body" 
+            else if (i == 3) secClass = "smallest-body"
+            else secClass = "small-body"
+            txtY = i == 1 ? _chart2.bigger_gap * i : _margin.top * 0.94 * i
+            const secLetfText = _createText(0, txtY, id = null, secClass, "start", dominatBaseline=null, _color.lightGrey, txt2Left[i])
+            const secRightText = _createText(innerColumnWidthEnd, txtY, id = null, "smallest-body", "end", dominatBaseline=null, _color.greyText, txt2Right[i])
+            secondGroup.appendChild(secLetfText)
+            secondGroup.appendChild(secRightText)
+      }
+      const secBar1BGChart = _createRect(0, _margin.bottom * 1.24, id = null, "detail-info-bar-bg", innerColumnWidth - _margin.gap, _chart2.big_gap * 0.76, _color.lightGrey)
+            secBar1BGChart.setAttribute('opacity', 0.4) 
+      const secBar1Rect = _createRect(0, _margin.bottom * 1.24, id = null, "detail-info-bar-grey", barWidth, _chart2.big_gap * 0.76, _color.lightGrey)
+      const secMddText = _createText(barWidth, _margin.bottom + (_margin.top * 1.2), id = null, "small-body", "start", dominatBaseline=null, _color.lightGrey, sneakersData.difference_highlight)
+            secondGroup.appendChild(secMddText)
+      const secImgGroup = document.createElementNS(_svgNS, 'g')
+            secondGroup.appendChild(secBar1BGChart)      
+            secondGroup.appendChild(secBar1Rect)
+            secondGroup.appendChild(secImgGroup) 
+      const secHighlightImg = _createImage(0, 0, id = null, 'detail-info-color-code-img', `img/color_shade/${sneakersData.title}_code.png`, innerColumnWidth/2, _margin.top * 1.6)
+            secImgGroup.setAttribute('transform', `translate(0, ${_margin.bottom * 2})`);
+            secImgGroup.appendChild(secHighlightImg)
+      for (var n = 0; n < 2; n++) {
+            const rectColor = n == 0 ? `rgb(${sneakersData.fullRGB[0].replaceAll(' ', ', ')})` : `rgb(${sneakersData.fullRGB[1].replaceAll(' ', ', ')})`
+            const rectText = n == 0 ? "Base" : "Highlight"
+            const rectHighlightChart = _createRect(innerColumnWidth/2 + (_margin.gap * 0.5), _margin.top * 0.8 * n, id = null, "detail-info-color-code", innerColumnWidth/2 - (_margin.gap * 1.5), _canvasHeight * _onGetRatio(24, null, _canvasHeight), rectColor)
+                  secImgGroup.appendChild(rectHighlightChart)
+            const rectBarText = _createText(innerColumnWidth/2 + (_margin.gap * 0.5) + (innerColumnWidth/2 - (_margin.gap * 1.5))/2, (_margin.top * 0.8 * n) + _chart2.smst_gap, id = null, "smallest-body", "middle", "hanging", "white", rectText)
+                  secImgGroup.appendChild(rectBarText)
+      }
+      // third column 
+      const thirdGroup = document.getElementById('detail_group_3')
+      const txt3Left = ['Price Premium', `${(sneakersData.price_premium * 100).toFixed(0).toLocaleString()}%`, 'Avg. Resale Price', `$${(minAvgResalePrice).toLocaleString()}`, 'Trading Range', `$${("" + sneakersData.range_trade_low).toLocaleString()}`]
+      const txt3Right = [`MSRP: $${sneakersData.retail_price}`, '', '', `$${(maxAvgResalePrice).toLocaleString()}`, '', `$${(maxAvgResalePrice).toLocaleString()}`]
+      const txt3Middle = ['', '', '', `$${(sneakersData.retail_price + (sneakersData.retail_price * sneakersData.price_premium)).toFixed(0).toLocaleString()}`, '', `$${("" + sneakersData.range_trade_high).toLocaleString()}`]
+      const arrowSymbol = (sneakersData.price_premium > 0.01) ? 'arrow_up' : 'arrow_down'
+      for (var i = 0; i < 6; i++) {
+            let thirdClass;
+            if (i == 1) thirdClass = "thin-biggest-body" 
+            else if (i == 3 || i == 5) thirdClass = "smallest-body"
+            else thirdClass = "small-body"
+            txtX = i == 1 && txt3Left[i].includes('%') ? _margin.gap * 0.58 : 0
+            if (i == 1) txtY = _chart2.bigger_gap * i 
+            else if (i == 3) txtY = _chart2.bigger_gap * 1.3 * i
+            else if (i == 5) txtY = _chart2.bigger_gap * 1.24 * i
+            else txtY = _margin.top * 0.9 * i
+            const thirdLetfText = _createText(txtX, txtY, id = null, thirdClass, "start", dominatBaseline=null, _color.lightGrey, txt3Left[i])
+            const thirdRightText = _createText(innerColumnWidthEnd, txtY, id = null, "smallest-body", "end", dominatBaseline=null, _color.greyText, txt3Right[i])
+            thirdGroup.appendChild(thirdLetfText)
+            thirdGroup.appendChild(thirdRightText)
+      }
+      const detailSymbol = _createImage(0, _chart2.smst_gap * 0.8, id = null, "detail-info-arrow", `img/${arrowSymbol}.svg`, _margin.gap * 0.38, height = null)
+            thirdGroup.appendChild(detailSymbol)
+      for (var m = 0; m < 2; m++) {
+            const thirdBarBGChart = _createRect(0, _margin.bottom + (m * _margin.bottom + (_margin.top * 0.42)), id = null, "detail-info-bar-bg", innerColumnWidth - _margin.gap, _chart2.big_gap * 0.76, _color.lightGrey)
+                  thirdBarBGChart.setAttribute('opacity', 0.4) 
+                  thirdGroup.appendChild(thirdBarBGChart)
+            barWidth = m == 0 ? (innerColumnWidth * (sneakersData.retail_price + (sneakersData.retail_price * sneakersData.price_premium)) / maxAvgResalePrice) : innerColumnWidth * sneakersData.range_trade_high / maxAvgResalePrice
+            const barWidth2 = m == 0 ? barWidth : innerColumnWidth * sneakersData.range_trade_high / maxAvgResalePrice
+            collectText = m == 0 ? txt3Middle[3] : txt3Middle[5]
+            const thirdMddText = _createText(barWidth, _margin.bottom + (m * _margin.bottom + (_margin.top * 1.34)), id = null, "small-body", "start", dominatBaseline=null, _color.premiumPrice, collectText)
+                  thirdGroup.appendChild(thirdMddText)
+            const thirdPremiumChart = _createRect(0, _margin.bottom + (m * _margin.bottom + (_margin.top * 0.42)), id = null, "detail-info-bar-primary", barWidth2, _chart2.big_gap * 0.76, _color.premiumPrice)
+                  thirdGroup.appendChild(thirdPremiumChart)
+      }
+      // fourth column 
+      const fourthGroup = document.getElementById('detail_group_4')   
+      const txt4left = ['Total Resale Volume', '204', 'Number of Asks',  '', 'Number of Bids', '']
+      const txt4right = ['' , '', '', `${(maxNumOfAsks).toLocaleString()}`, '', `${(maxNumOfBids).toLocaleString()}`]
+      const txt4middle = ['' , '', '', `${(sneakersData.number_of_Asks).toLocaleString()}`, '', `${(sneakersData.number_of_Bids).toLocaleString()}`]
+      for (var i = 0; i < 6; i++) {
+            if (i == 1) txtY = _chart2.bigger_gap * i 
+            else if (i == 3) txtY = _chart2.bigger_gap * 1.3 * i
+            else if (i == 5) txtY = _chart2.bigger_gap * 1.24 * i
+            else txtY = _margin.top * 0.9 * i
+            const fourthClass = i == 1 ? "thin-biggest-body" : "small-body"
+            const fourthLetfText = _createText(0, txtY, id = null, fourthClass, "start", dominatBaseline=null, _color.lightGrey, txt4left[i])
+            const fourthRightText = _createText(innerColumnWidthEnd, txtY, id = null, "smallest-body", "end", dominatBaseline=null, _color.greyText, txt4right[i])
+                  fourthGroup.appendChild(fourthLetfText)
+                  fourthGroup.appendChild(fourthRightText)
+      }
+      for (var m = 0; m < 2; m++) { 
+            bar2Width = m == 0 ? innerColumnWidth * sneakersData.number_of_Asks / maxNumOfAsks : innerColumnWidth * sneakersData.number_of_Bids / maxNumOfBids
+            collectText =  m == 0 ? txt4middle[3] : txt4middle[5]
+            const fourthBarBGChart = _createRect(0, _margin.bottom + (m * _margin.bottom + (_margin.top * 0.4)), id = null, "detail-info-bar-bg", innerColumnWidth - _margin.gap, _chart2.big_gap * 0.76, _color.lightGrey)
+                  fourthBarBGChart.setAttribute('opacity', 0.4)      
+                  fourthGroup.appendChild(fourthBarBGChart)
+            const fourthMddText = _createText(bar2Width, _margin.bottom + (m * _margin.bottom + (_margin.top * 1.34)), id = null, "small-body", "start", dominatBaseline=null, _color.resaleVolume, collectText)
+                  fourthGroup.appendChild(fourthMddText)
+            const fourthresaleChart = _createRect(0, _margin.bottom + (m * _margin.bottom + (_margin.top * 0.4)), id = null, "detail-info-bar-primary", bar2Width, _chart2.big_gap * 0.76, _color.resaleVolume)
+                  fourthGroup.appendChild(fourthresaleChart)
+      }
+    }
+
     // remove children nodes from parent
     function _removeAllChildNodes(parent) {
       while (parent.firstChild) parent.removeChild(parent.firstChild);
@@ -945,7 +1090,7 @@
             naviBar.appendChild(dollarSign)
       const titleCopy = _createText(_margin.left, _margin.top * 1.2, 'top-title', 'title', 'start', dominantBaseline = null, _color.mainBG, 'How Colors Affect Resale Values')
             naviBar.appendChild(titleCopy)
-      const bodyCopy = _createText(_margin.left, _margin.top * 1.4, 'top-body', 'smaller-body', 'start', 'hanging', _color.lightGrey, 'Hint: Right next four colors get higher average price premium than other clusters.')
+      const bodyCopy = _createText(_margin.left, _margin.top * 1.4, 'top-body', 'smaller-body', 'start', 'hanging', _color.lightGrey, 'Hint: Right next four colors have higher average of the price premium than other clusters.')
             naviBar.appendChild(bodyCopy)
       const togGroup = document.createElementNS(_svgNS, 'g')
             togGroup.setAttribute('transform', `translate(${_canvasWidth - (_margin.left * 0.9) - toggleWidth}, ${_margin.top * 0.6})`);
@@ -976,13 +1121,13 @@
             mainSVG.appendChild(popupChart)
       // popup detail infos
       const detailSVG = document.createElementNS(_svgNS, 'svg');
-            detailSVG.setAttribute('id', 'detail-infos-svg');
+            detailSVG.setAttribute('id', 'detail-vertical-infos-svg');
             detailSVG.setAttribute('width', _canvasWidth);
             detailSVG.setAttribute('height', _canvasHeight * 0.896);
             detailSVG.setAttribute('class', 'top');
             detailSVG.setAttribute('display', 'none')
       const detailInfos = document.createElementNS(_svgNS, 'g')
-            detailInfos.setAttribute('id', 'detail-chart')
+            detailInfos.setAttribute('id', 'detail-vertical-chart')
             detailSVG.appendChild(detailInfos)
             container.appendChild(detailSVG);
       // create init map
@@ -1002,7 +1147,7 @@
       const sec0Line = document.createElementNS(_svgNS, 'path');
             sec0Line.setAttribute('id', 'navigation');
             sec0Line.setAttribute('d', `M${_margin.left} ${_canvasHeight * 0.2 - _margin.top} L${_margin.left + _canvasWidth * _onGetRatio(120, _canvasWidth, null)} ${_canvasHeight * 0.2 - _margin.top} L${_canvasWidth - _margin.left} ${_canvasHeight * 0.2 + _margin.bottom} L${_margin.left} ${_canvasHeight * 0.2 + _margin.bottom} Z`);
-            sec0Line.setAttribute('fill', _color.chartBG);
+            sec0Line.setAttribute('fill', _color.mainBG);
             sec0Line.setAttribute('fill-opacity', '0');
             sec0Svg.appendChild(sec0Line);
       // legend
