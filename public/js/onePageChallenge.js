@@ -575,7 +575,7 @@
             _removeAllChildNodes(document.getElementById('total-legend-group'));
             _createLegend(document.getElementById('total-legend-group'), 'releaseDate')
             _removeAllChildNodes(clusterGroup);
-            _removeAllChildNodes(document.getElementById('detail-chart'));
+            _removeAllChildNodes(document.getElementById('detail-vertical-chart'));
             _createColorChart(target = null, dataReleaseD)
             }
     }
