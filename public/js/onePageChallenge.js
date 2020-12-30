@@ -932,7 +932,7 @@
       let txtX, txtY, barWidth;
       const detailMapY = _canvasHeight * 0.42
       const detailMapWidth = _canvasWidth - (_margin.left * 2)
-      const detailMapHeight = _canvasHeight * 0.19 - _margin.bottom
+      const detailMapHeight = _margin.bottom * 4.3
       const innerColumnWidth = (detailMapWidth / 4) - _margin.gap// _canvasWidth * _onGetRatio(176, _canvasWidth, null)
       const innerColumnWidthEnd = innerColumnWidth - _margin.gap
       const detailSVG = document.getElementById('detail-horizontal-infos-svg')
