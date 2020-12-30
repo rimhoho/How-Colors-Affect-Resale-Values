@@ -558,7 +558,7 @@
             _removeAllChildNodes(document.getElementById('total-legend-group'));
             _createLegend(document.getElementById('total-legend-group'), 'colorDifference')
             _removeAllChildNodes(clusterGroup);
-            _removeAllChildNodes(document.getElementById('detail-chart'));
+            _removeAllChildNodes(document.getElementById('detail-vertical-chart'));
             _createColorChart(target = null, dataPrimaryD)
             } else {
             colorChart1.setAttribute('display', 'none')
