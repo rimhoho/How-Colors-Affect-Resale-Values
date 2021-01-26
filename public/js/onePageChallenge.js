@@ -298,8 +298,8 @@
             target.appendChild(legendBoxG)
       let titleContext, bodyContext, bgX, bgW, bgH, title, legendColor, maxLength;
       if (typeFeature == 'colorDifference') {
-            titleContext = ['Filter By', 'Delta E', 'Algorithms']
-            bodyContext = 'Delta E is a metric for understanding how the human eye perceives color differences. A sneaker that has a primary color that relatively closes to RGB(0, 0, 0) was selected to applying the first-ever Delta E - Euclidean Distance formula and measuring the distance between the two points in 3D space. Based on the standard perception ranges (0 to 100), the collected Delta E distributions were divided into 11 clusters by 9.43 - The number comes from several tries around ±10 to figure which numbers can be clustered or not.'
+            titleContext = ['Explore the', 'Delta E', 'Color Clusters']
+            bodyContext = 'In order to find any evidence that the colorways of Yeezy are becoming similar to previous released ones, Adobe color was selected to extract color combinations and StockX.com was selected where is the most popular resale sneakers platform in the world to get all the necesary data for Yeezy sneakers incluyding the volume of the colorways, price premium and, the number of resales. Color Clustering by Delta E allows to collect 11 clusters where you can see below filter options. These clusters are based on the standard perception ranges(0 - 100) that are between 0 to 9.43. If the color distance is higher than 10, I set the sneakers to be a new cluster.'
             bgX = _canvasWidth - _margin.left - (_margin.columnWidth * 0.6)
             bgW = _margin.columnWidth * 1.566
             bgH = _margin.bottom * 1.76
