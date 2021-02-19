@@ -1301,9 +1301,9 @@ Promise.all([
 //           topPremiumGroup.appendChild(topPremiumRect);
 //     const titleTxt = _createText(0, 0, id = null, 'thin-bigger-body title-txt', "start", "hanging", _color.blueGrey, 'Top 12 Shoes by Price Premium')
 //           topPremiumGroup.appendChild(titleTxt)
-//       filterByClusterGroup.addEventListener('click', function(e) {filterTilteHandling(e, popupWidth)})
-//       filterBySeriesGroup.addEventListener('click', function(e) {filterTilteHandling(e, popupWidth)})
-//       filterByYearGroup.addEventListener('click', function(e) {filterTilteHandling(e, popupWidth)})
+      filterByClusterGroup.addEventListener('click', function(e) {filterTilteHandling(e, popupWidth)})
+      filterBySeriesGroup.addEventListener('click', function(e) {filterTilteHandling(e, popupWidth)})
+      filterByYearGroup.addEventListener('click', function(e) {filterTilteHandling(e, popupWidth)})
       // default value
       _filterByData(_colorMapByCluster, popupWidth)
   }
