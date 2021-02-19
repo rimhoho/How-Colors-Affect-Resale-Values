@@ -532,7 +532,7 @@ Promise.all([
       })
       e.target.parentNode.firstChild.firstChild.nextElementSibling.setAttribute('y1', -10)
       e.target.parentNode.firstChild.firstChild.nextElementSibling.setAttribute('y2', -10)
-      e.target.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.setAttribute('y', -10)
+      e.target.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.setAttribute('y', 0)
     }
   }
   function _Tween4DisplayDetails() {
@@ -1160,9 +1160,9 @@ Promise.all([
             mainTitle.textContent = 'Color Cluster Map'
             mainDiv.appendChild(mainTitle)
       const mainCopy = document.createElement('p')
-              _setAttributes(mainCopy, {class: 'mideum-body', style: `color: ${_color.greyText};`})
-              mainCopy.textContent = 'This map tracks the primary color of Yeezy sneakers (84 pairs) that begins with RGB(0, 0, 0). The distance of each sneakers takes their color difference based on Delta E Algorithm, so the longer gap means two primary colors of sneakers aren\'t closer than others that have a narrower gap.'
-              mainDiv.appendChild(mainCopy)
+            _setAttributes(mainCopy, {class: 'mideum-body', style: `color: ${_color.greyText};`})
+            mainCopy.textContent = 'This map tracks the primary color of Yeezy sneakers (84 pairs) that begins with RGB(0, 0, 0). The distance of each sneakers takes their color difference based on Delta E Algorithm, so the longer gap means two primary colors of sneakers aren\'t closer than others that have a narrower gap.'
+            mainDiv.appendChild(mainCopy)
       const hoverRect = document.getElementById('display-none')
       hoverRect.addEventListener("mouseover", (e)=> {
         if (!isHover) {
