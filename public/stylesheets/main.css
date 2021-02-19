@@ -1,24 +1,26 @@
 body {max-width: 1580px; margin: auto; color: #37383D;}
-div, svg {margin: 0; padding: 0;}
-#navi-bar {display: block;}
-#container {display: relative;}
+svg {margin: auto 0; padding: 0; display: block;}
+#navi-bar {display: flex; justify-content: space-evenly; padding: 16px 0;}
+
 .top {position: absolute;}
 .padding-xy {padding-top: 1.2rem; padding-bottom: 1rem;}
-
-.title {font-weight: 300; font-size: 1.2rem; margin: 0; line-height: 96%;}
-.thin-biggest-body {font-weight: 100; font-size: 1.24rem; letter-spacing: -0.02em}
-.bigger-body {font-weight: 300; font-size: 1rem; letter-spacing: -0.02em}
-.big-body {font-weight: 700; font-size: 0.8rem; letter-spacing: -0.03em; word-spacing: -0.1em;}
-.mideum-body {font-weight: 500; font-size: 0.7rem; letter-spacing: -0.03em; word-spacing: -0.06em;}
-.small-body {font-size: 0.65rem; letter-spacing: -0.02em;}
+.lined {background-color: #484f59; padding: 1.6px 10px; margin-top: 1px;}
+.title {font-weight: 700; font-size: 1.4rem; margin: 0; line-height: 96%; letter-spacing: -0.02em;}
+.thin-bigger-body {font-weight: 100; font-size: 1.2rem; letter-spacing: -0.02em}
+.bigger-body {font-weight: 500; font-size: 1rem; letter-spacing: -0.02em}
+.big-body {font-weight: 700; font-size: 0.82rem; letter-spacing: -0.03em; word-spacing: -0.1em;}
+.mideum-body {font-weight: 500; font-size: 0.76rem; letter-spacing: -0.03em; word-spacing: -0.06em;}
+.small-body {font-size: 0.68rem; letter-spacing: -0.02em;}
 .smaller-body {font-weight: 500; font-size: 0.605rem; letter-spacing: -0.02em;}
-.smallest-body {font-weight: 500; font-size: 0.58rem; letter-spacing: -0.02em;}
-.legend-body {font-weight: 500; font-size: 0.48rem; letter-spacing: -0.02em;}
+.legend-body {font-weight: 500; font-size: 0.58rem; letter-spacing: -0.04em;}
 .bold {font-weight: 700;}
 .light {font-weight: 100;}
 .left-round {border-top-left-radius: 0.4rem; border-bottom-left-radius: 0.4rem;}
 .right-round {border-top-right-radius: 0.4rem; border-bottom-right-radius: 0.4rem;}
-
+.shadow {box-shadow:
+    0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.056),
+    0 80px 170px #ededed;}
 .button {min-width: 4rem; border-style: solid; border-color: #b3b3b3; color: #333333; background-color: white; border-width: 0.01rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
 .redBtn {min-width: 4rem; border-style: solid; color:white; border-color: #333333; background-color: #f65e5d; border-width: 0.01rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
 .blueBtn {min-width: 4rem; border-style: solid; color: white; border-color: #333333; background-color:#0382ed; border-width: 0.01rem; padding: 0.6rem 2.4rem; cursor: pointer;transition: all .3s .1s, width .1s, top .1s, bottom .1s;}
@@ -29,6 +31,7 @@ div, svg {margin: 0; padding: 0;}
 .pointer {cursor: pointer;}
 /* width */
 ::-webkit-scrollbar {width: 0.5rem;height: 0.5rem;}
-::-webkit-scrollbar-track {background: #F9F9F9; }
-::-webkit-scrollbar-thumb {background: #A2A3A7; border-radius: 20px;}
-::-webkit-scrollbar-thumb:hover {background: #303642; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {background: #484f59; }
+::-webkit-scrollbar-thumb {background: #303642; border-radius: 20px;}
+::-webkit-scrollbar-thumb:hover {background: #A2A3A7; }
+

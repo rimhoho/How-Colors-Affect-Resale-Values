@@ -4,6 +4,7 @@
   <title>How Color Affects on the Resale</title>
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="https://d3js.org/d3-collection.v1.min.js"></script>
+  <script src="https://d3js.org/d3-time-format.v3.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/CSSRulePlugin.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/MotionPathPlugin.min.js"></script>
@@ -11,10 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <svg id='navi-bar' class="no-action"></svg>
+  <div id='navi-bar' class="shadow">
+    <div id="story" class="big-body pointer">READ THE CHARTS<div></div></div>
+    <div id="colorCluster" class="big-body pointer">EXPLORE THE COLOR CLUSTER<div></div></div>
+  </div>
   <div id="container"></div>
-  <!-- <script src="/js/script.js"></script> -->
-  <script src="/js/onePageChallenge.js"></script>
+  <script src="/js/script.js"></script>
   <script src="/js/getColorCuster.js"></script>
 </body>
 </html>

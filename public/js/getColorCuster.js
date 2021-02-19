@@ -103,7 +103,7 @@ let colorWayNname = [{target: '380 Onyx', fullRGB: ["52 44 48", "82 69 70", "33 
     let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
     return i < 0 ? 0 : Math.sqrt(i);
   }
-  
+  // convert to LAB color from RGB
   function rgb2lab(rgb){
     let r = rgb[0] / 255, g = rgb[1] / 255, b = rgb[2] / 255, x, y, z;
     r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
