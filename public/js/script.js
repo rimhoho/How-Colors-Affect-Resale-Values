@@ -22,7 +22,7 @@ const _chart2 = {width: _canvasWidth - _margin.left, height: _canvasHeight * 0.2
                  bigger_gap: _canvasHeight * _onGetRatio(22, null, _canvasHeight), big_gap: _canvasHeight * _onGetRatio(16, null, _canvasHeight),
                  sm_gap: _canvasHeight * _onGetRatio(12, null, _canvasHeight), smer_gap: _canvasHeight * _onGetRatio(10, null, _canvasHeight),
                  smst_gap: _canvasHeight * _onGetRatio(8, null, _canvasHeight)}
-const _color = {mapLine: "#c6c6c6", mapBG: "#f0f0f0", mainMap: "#e6e6e6", premiumPrice: "#F65E5D", resaleVolume: "#0382ed", yellow: "#ffd62c", msrp: "#808080", blueGrey: "#484f59", chartBG: "#FDFDFD", text: "#333333", greyText: '#999999', greyBlue: "#7e8996"}
+const _color = {mapLine: "#c6c6c6", mapBG: "#f0f0f0", premiumPrice: "#F65E5D", resaleVolume: "#0382ed", yellow: "#ffd62c", msrp: "#808080", blueGrey: "#484f59", chartBG: "#FDFDFD", text: "#333333", greyText: '#999999', greyBlue: "#7e8996"}
 const _colorXScale = _canvasWidth - (_margin.left * 2) - _margin.right;
 const _colorYScale = _canvasHeight - _chart2.height - _margin.left; 
 let colorMapData = [], avgSumOfSold = 0;
@@ -247,14 +247,14 @@ Promise.all([
           yAxisGroup.setAttribute('id', 'yAxis');
     // yAxis text
     const yAxisTextEl = _createText(0, 0, id = null, 'yAxisText', textAnchor = null, dominantBaseline = null, color = null, textContent = null)
-    const yAxisDesc = _createText(_margin.left * 0.97, _chart2.height, id = null, 'smaller-body', 'end', 'hanging', color = null, 'Trading Range ($)')
+    const yAxisDesc = _createText(_margin.left * 0.97, _chart2.height, id = null, 'smaller-body', 'end', 'hanging', _color.greyText, 'Trading Range ($)')
     let flag = 0;
     for (var i = maxValue; i >= 0; i -= interval) {
       flag ++;
       const newDy = flag == 2 ? _chart2.smer_gap * 0.8 : yScalText
-      const colorLine = flag % 2 != 0 ?  _color.mapBG : _color.mapBG
+      const colorLine = flag % 2 != 0 ?  _color.mapLine : _color.mapLine
       const yAxisBar = _createLine(_margin.left, _margin.left * 1.04, _chart2.height * i / maxValue, _chart2.height * i / maxValue, id = null, 'yAxis',  colorLine, _canvasWidth * _onGetRatio(0.6, _canvasWidth, null), "1")
-      const yAxisTspan = _createTspan(_margin.left * 0.97, newDy, id = null, 'smaller-body', 'end', _color.text, i.toLocaleString())
+      const yAxisTspan = _createTspan(_margin.left * 0.97, newDy, id = null, 'smaller-body', 'end', _color.greyText, i.toLocaleString())
               yAxisGroup.appendChild(yAxisBar)
               if (flag % 2 == 0) yAxisTextEl.appendChild(yAxisTspan)
     }
@@ -355,9 +355,9 @@ Promise.all([
         const xAxisTspan1 = _createTspan(0, 0, id = null, 'small-body bold', 'start', _color.text, item)
               xAxisTextEl.appendChild(xAxisTspan1)
       })
-      const xAxisTspan2 = _createTspan(0, 0, id = null, 'smaller-body', 'start', _color.mapBG, "")
+      const xAxisTspan2 = _createTspan(0, 0, id = null, 'legend-body', 'start', _color.greyText, "")
             xAxisTextEl.appendChild(xAxisTspan2)
-      const xAxisTspan3 = _createTspan(0, 0, id = null, 'smaller-body', 'start', _color.mapBG, "")
+      const xAxisTspan3 = _createTspan(0, 0, id = null, 'legend-body', 'start', _color.greyText, "")
             xAxisTextEl.appendChild(xAxisTspan3)
       const barImg = _createImage(0, 0, id = null, classes = null,'', 0, height = null)
             barG.appendChild(xAxisTextEl)
@@ -412,12 +412,10 @@ Promise.all([
         sneakersGroup.lastChild.previousSibling.childNodes[index].textContent = ''
       }
     })
-//     console.log(c, sneakersGroup)
     sneakersGroup.lastChild.previousSibling.childNodes[3].setAttribute('dy', _chart2.sm_gap)
     sneakersGroup.lastChild.previousSibling.childNodes[3].textContent = newShortenMonth
     sneakersGroup.lastChild.previousSibling.childNodes[4].setAttribute('dy', _chart2.smer_gap)
     sneakersGroup.lastChild.previousSibling.childNodes[4].textContent = newShortenYear
-
     sneakersGroup.lastChild.setAttribute('x', _chart2.smer_gap * -0.4) // image
     sneakersGroup.lastChild.setAttribute('y', premiumH - (_chart2.smer_gap * 0.4))
     sneakersGroup.lastChild.setAttribute('id', `premium_${title}`)
@@ -427,7 +425,7 @@ Promise.all([
   }
 
   // set animation on bar charts
-  function _onTweenChart(c, target, arrData) {
+  function _onTweenChart(c, target, pointedSnekers, arrData) {
     const getIdx = target.id.split('_')[1];
     const targetChart = target.parentNode.parentNode.firstChild.lastChild.childNodes;
     let sumUp4avg;
@@ -454,8 +452,12 @@ Promise.all([
           if (targetChart[c] != undefined) _setAttributeTrading(c, targetChart[c], newX, mstpH, premiumH, baseH, barW, x1, y1, y2, y3, newShortentitle, newShortenMonth, newShortenYear, range_trade_high, range_trade_low, retail_price, title);
           // set default sneakers
           document.getElementById('empty-detail-BG').setAttribute('display', 'none')
-          if (c == 1) _onInitDetailInfos(targetChart[1].lastChild)
+          _removeAllChildNodes(document.getElementById('detail-infos'))
+          if (targetChart[c] == undefined) _onInitDetailInfos(targetChart[Math.round(document.getElementById('chartBG').width.animVal.value / 52) - 1].lastChild)
+          else _onInitDetailInfos(targetChart[c].lastChild)
       }
+      
+      // if (c == pointedSnekers) 
     })
     return sumUp4avg
   }
@@ -484,7 +486,7 @@ Promise.all([
   const detectArea = _canvasWidth * _onGetRatio(40, _canvasWidth, null);
   const radius = _canvasWidth * _onGetRatio(140, _canvasWidth, null);
   function _updateMouseX(e, isHover, sneakersData) {
-    let mouseX, targetX;
+    let mouseX, targetX, pointedSnekers;
     let radians, newX, newY;
     let startX, endX;
     let avg_value;
@@ -498,15 +500,17 @@ Promise.all([
       e.target.previousSibling.childNodes.forEach(item => {
         mouseX = e.pageX - (Math.floor(window.innerWidth) - _canvasWidth) / 2 - _margin.left;
         targetX = item.firstChild.nextElementSibling.nextElementSibling.cx.animVal.value;
+        pointedSnekers = item.firstChild.nextElementSibling.nextElementSibling.id.split('_')[2]
         if (Math.abs(item.firstChild.nextElementSibling.nextElementSibling.cx.animVal.value - mouseX) <= detectArea && item.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.getAttribute('transform')) {
           c += 1;
           _onTweenMap(item, mouseX, radians, newX, newY, startX, endX)
-          avg_value = _onTweenChart(c, item, sneakersData)
+          avg_value = _onTweenChart(c, item, pointedSnekers, sneakersData)
           sumUp4avg += avg_value
-          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.setAttribute('y1', _chart2.height - (_chart2.height * (sumUp4avg / c) / maxValue4avg))
-          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.setAttribute('y2', _chart2.height - (_chart2.height * (sumUp4avg / c) / maxValue4avg))
-          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.setAttribute('y', _chart2.height - (_chart2.height * (sumUp4avg / c) / maxValue4avg) - (_chart2.smer_gap * 0.5))
-          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent = "Avg. Resale Price $" + parseInt(sumUp4avg / c).toLocaleString()
+          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.setAttribute('y1', _chart2.height - (_chart2.height * (sumUp4avg / c) / maxValue4avg))
+          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.setAttribute('y2', _chart2.height - (_chart2.height * (sumUp4avg / c) / maxValue4avg))
+          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.setAttribute('fill-opacity', 1);
+          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.setAttribute('y', _chart2.height - (_chart2.height * (sumUp4avg / c) / maxValue4avg) - (_chart2.smer_gap * 0.5))
+          item.parentNode.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.textContent = "Avg. Resale Price $" + parseInt(sumUp4avg / c).toLocaleString()
         } else {
           item.firstChild.setAttribute("stroke-opacity", 0);
           item.firstChild.nextElementSibling.setAttribute("x2", targetX)
@@ -526,13 +530,12 @@ Promise.all([
         if (gsap.getById("imgRise")) {gsap.getById("imgRise").reverse();}
         item.firstChild.setAttribute("stroke-opacity", 0);
         item.firstChild.nextElementSibling.setAttribute("stroke-opacity", 0);
-        item.parentNode.parentNode.firstChild.setAttribute('fill-opacity', 0);
         item.parentNode.parentNode.firstChild.nextElementSibling.setAttribute('fill-opacity', 0);
         gsap.to(item.firstChild.nextElementSibling.nextElementSibling.nextElementSibling, {id: "letFall", duration: 0.75,  rotation: 0, x: 0 , y:0, ease: "elastic.out(1, 0.5)"})
       })
-      e.target.parentNode.firstChild.firstChild.nextElementSibling.setAttribute('y1', -10)
-      e.target.parentNode.firstChild.firstChild.nextElementSibling.setAttribute('y2', -10)
-      e.target.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.setAttribute('y', 0)
+      e.target.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.setAttribute('y1', -10)
+      e.target.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.setAttribute('y2', -10)
+      e.target.parentNode.firstChild.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.setAttribute('fill-opacity', 0);
     }
   }
   function _Tween4DisplayDetails() {
@@ -551,7 +554,7 @@ Promise.all([
     const sec0Rect1 = document.createElementNS(_svgNS, 'path');
           sec0Rect1.setAttribute('id', 'navigation');
           sec0Rect1.setAttribute('d', `M${_margin.left} ${_canvasHeight * 0.14} L${_margin.left + _canvasWidth * _onGetRatio(120, _canvasWidth, null)} ${_canvasHeight * 0.14} L${_canvasWidth - _margin.left} ${_canvasHeight * 0.14} L${_margin.left} ${_canvasHeight * 0.14} Z`);
-          sec0Rect1.setAttribute('fill', _color.mainMap);
+          sec0Rect1.setAttribute('fill', _color.mapBG);
           sec0Rect1.setAttribute('fill-opacity', 1);
           mainSVG.appendChild(sec0Rect1);
 //     const sec0ClusterG = document.createElementNS(_svgNS, 'g');
@@ -576,6 +579,7 @@ Promise.all([
             destGroup1.appendChild(hovorText1);
     }
     mainSVG.appendChild(destGroup1)
+    // d
     // major navigation
     const sec0Rect3 = _createRect(0, _canvasHeight * 0.2 - _canvasHeight * _onGetRatio(220, null, _canvasHeight), 'display-none', classes = null,_canvasWidth, _canvasHeight * _onGetRatio(270, null, _canvasHeight), 'rgba(255, 255, 10, 0)')
           mainSVG.appendChild(sec0G);
@@ -603,18 +607,18 @@ Promise.all([
   }
   function _OnInitBelowChart(belowChart) {
     // bg
-    const sec2RectBG = _createRect(_margin.left, 0, 'chartBG', classes = null, _chart2.width - _margin.left, _chart2.height, _color.mainMap)
+    const sec2RectBG = _createRect(_margin.left, 0, 'chartBG', classes = null, _chart2.width - _margin.left, _chart2.height, _color.mapBG)
           sec2RectBG.setAttribute('display', 'none')
           belowChart.appendChild(sec2RectBG);
     // create avg. price premium guideline in dash
     const avg_line1 = _createLine(_margin.left, _chart2.width, -10, -10, 'avg_guideline', classes = null, _color.mapLine, _canvasWidth * _onGetRatio(0.6, _canvasWidth, null), "1")
           avg_line1.setAttribute('stroke-dasharray', _margin.gap * 0.1)
           belowChart.appendChild(avg_line1);
-    const avg_text1 = _createText(_chart2.width * 1.01, _canvasHeight * 0.2 - (_margin.bottom * 2.6), id = null, 'small-body', 'start', dominantBaseline = null, _color.text, "") 
+    const avg_text1 = _createText(_chart2.width * 1.01, _canvasHeight * 0.2 - (_margin.bottom * 2.6), 'avg_text', 'small-body', 'start', dominantBaseline = null, _color.text, "") 
           belowChart.appendChild(avg_text1);
     // xAxis
     const sec2xAxis = _createLine(_margin.left, _chart2.width, _chart2.height, _chart2.height, 'xAxis', classes = null, _color.text, _canvasWidth * _onGetRatio(0.6, _canvasWidth, null), "1")
-          belowChart.appendChild(sec2xAxis);
+          belowChart.appendChild(sec2xAxis);  
     // group tag
     const sec2Group1 = document.createElementNS(_svgNS, 'g');
           sec2Group1.setAttribute('id', 'below-chart-bar-group')
@@ -703,8 +707,8 @@ Promise.all([
               const rectBarText = _createText(innerColumnWidth/2 + (_margin.gap * 0.5) + (innerColumnWidth/2 - (_margin.gap * 1.5))/2, (_margin.top * 0.8 * n) + _chart2.smst_gap, id = null, "legend-body", "middle", "hanging", "white", rectText)
                     secImgGroup.appendChild(rectBarText)
         }
-        document.getElementById('color-bg').setAttribute('fill', `rgb(${sneakersData.fullRGB[0].replaceAll(' ', ', ')})`)
-        document.getElementById('color-bg').setAttribute('fill-opacity', 0.5)
+      //   document.getElementById('color-bg').setAttribute('fill', `rgb(${sneakersData.fullRGB[0].replaceAll(' ', ', ')})`)
+      //   document.getElementById('color-bg').setAttribute('fill-opacity', 0.5)
         // third column 
         const thirdGroup = document.getElementById('detail_group_3')
         const txt3Left = ['Price Premium', `${(sneakersData.price_premium * 100).toFixed(0).toLocaleString()}%`, 'Avg. Resale Price', `$${(minAvgResalePrice).toLocaleString()}`, 'Trading Range', `$${("" + sneakersData.range_trade_low).toLocaleString()}`]
@@ -795,7 +799,7 @@ Promise.all([
             else groupX = (popupWidth - (_margin.left * 2.4)) + (t * _margin.right * 1.1)
             const legendGroup = document.createElementNS(_svgNS, 'g');
                   legendGroup.setAttribute('id', `popup-legend-group-${t}`)
-                  legendGroup.setAttribute('transform', `translate(${groupX}, ${_margin.top * 0.78})`)
+                  legendGroup.setAttribute('transform', `translate(${groupX}, ${_margin.top * 0.46})`)
                   popupMainSvg.appendChild(legendGroup)
             for (var b = 0; b < 2; b++) {
                   const legendInnerGroup = document.createElementNS(_svgNS, 'g');
@@ -880,7 +884,7 @@ Promise.all([
             const tradingBarContent = [`$${(sneakersData.retail_price).toLocaleString()}`, `$${(sneakersData.range_trade_low).toLocaleString()}`, `$${(sneakersData.range_trade_high).toLocaleString()}`]
             const barColor = sneakersData.range_trade_high < sneakersData.retail_price ? _color.greyText : _color.premiumPrice
             // add Bar chart
-            const popUpPremiumChart = _createRect(0, _margin.top * i * 1.42, id = null, "detail-info-bar-primary", tradingBarWidth, _chart2.big_gap, _color.mainMap)
+            const popUpPremiumChart = _createRect(0, _margin.top * i * 1.42, id = null, "detail-info-bar-primary", tradingBarWidth, _chart2.big_gap, _color.mapBG)
                   popUpBarGroup.appendChild(popUpPremiumChart)  
             const tradingPriceBar = _createRect(detailWidth * sneakersData.range_trade_low / maxAvgResalePrice, _margin.top * i * 1.42, id = null, classes = null, tradingBarWidth - detailWidth * sneakersData.range_trade_low / maxAvgResalePrice, _chart2.big_gap, barColor)
                   popUpBarGroup.appendChild(tradingPriceBar)
@@ -986,7 +990,7 @@ Promise.all([
       // default sneakers detail info
       _onInitDetailVertical(mapData[findIdx])
       const arrowDesc = _createImage(_margin.right * 0.6, _margin.top * 1.44, 'arrow_desc', "pointer", `img/arrow_desc.svg`, _canvasWidth * _onGetRatio(13, _canvasWidth, null), height = null)
-      const arrowDescTxt = _createText(_margin.right * 0.88, _margin.top * 1.4, id = null, "legend-body", "start", dominantBaseline = null, _color.yellow, 'A Shoes with the highest price premium')
+      const arrowDescTxt = _createText(_margin.right * 0.82, _margin.top * 1.3, id = null, "legend-body", "start", dominantBaseline = null, _color.yellow, 'A Shoes with the highest price premium')
             document.getElementById('detail-vertical-chart').appendChild(arrowDesc)
             document.getElementById('detail-vertical-chart').appendChild(arrowDescTxt)
       // Check sneakers has been clicked - if yes, show detail infos
@@ -1131,11 +1135,8 @@ Promise.all([
             belowChart.setAttribute('id', 'below-chart')
             belowChart.setAttribute('transform', `translate(0, ${_canvasHeight * 0.22 + _margin.top})`);
             mainSVG.appendChild(belowChart)
-      const adjustableBG = _createRect(0, -_margin.top * 1.1, 'color-bg', classes=null, _canvasWidth, _canvasHeight * 0.46, _color.mainMap)
-            belowChart.appendChild(adjustableBG)
-      const blackBG = _createRect(0, -_margin.top * 1.1, 'black-bg', classes=null, _canvasWidth, _canvasHeight * 0.46, "black")
-            blackBG.setAttribute('fill-opacity', 0.14)
-            belowChart.appendChild(blackBG)
+      const clusterContainerBG = _createRect(0, -_chart2.smer_gap, 'cluster-container-bg', classes=null, _canvasWidth, _canvasHeight * 0.46, _color.mapBG)
+            belowChart.appendChild(clusterContainerBG)
             _OnInitMainMap(mainSVG, flag4cluster);
             _OnInitBelowChart(belowChart);
             
@@ -1217,7 +1218,7 @@ Promise.all([
           storyMap.setAttribute('width', _canvasWidth);
           storyMap.setAttribute('height', _canvasHeight * 0.6 - _margin.top);
           container.appendChild(storyMap)
-    const filterRect1 = _createRect(0, 0, 'filter-bg', classes = null, _canvasWidth,  _canvasHeight * 0.565, _color.mainMap)
+    const filterRect1 = _createRect(0, 0, 'filter-bg', classes = null, _canvasWidth,  _canvasHeight * 0.57, _color.mapBG)
           storyMap.appendChild(filterRect1);
     const filterMainGroup = document.createElementNS(_svgNS, 'g');
           filterMainGroup.setAttribute('id', 'filter-group');
@@ -1260,7 +1261,7 @@ Promise.all([
     const storyMainMapGroup = document.createElementNS(_svgNS, 'g');
           storyMainMapGroup.setAttribute('id', 'popup-chart')
           filterMainChartGroup.appendChild(storyMainMapGroup)
-    const sec1Rect = _createRect(0, -_chart2.smer_gap, 'popup-BG', classes = null, popupWidth + (_margin.left * 1.8),_canvasHeight * _onGetRatio(560, null, _canvasHeight), _color.blueGrey)
+    const sec1Rect = _createRect(0, -_chart2.smer_gap, 'popup-BG', classes = null, popupWidth + (_margin.left * 1.8),_canvasHeight * _onGetRatio(566, null, _canvasHeight), _color.blueGrey)
           sec1Rect.setAttribute('rx', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
           sec1Rect.setAttribute('ry', _canvasWidth * _onGetRatio(8, _canvasWidth, null))
           storyMainMapGroup.appendChild(sec1Rect);
