@@ -10,7 +10,7 @@ svg {margin: auto 0; padding: 0; display: block;}
 .bigger-body {font-weight: 500; font-size: 1rem; letter-spacing: -0.02em}
 .big-body {font-weight: 700; font-size: 0.82rem; letter-spacing: -0.03em; word-spacing: -0.1em;}
 .mideum-body {font-weight: 500; font-size: 0.76rem; letter-spacing: -0.03em; word-spacing: -0.06em;}
-.small-body {font-size: 0.68rem; letter-spacing: -0.02em;}
+.small-body {font-size: 0.68rem; letter-spacing: -0.04em;}
 .smaller-body {font-weight: 500; font-size: 0.605rem; letter-spacing: -0.02em;}
 .legend-body {font-weight: 500; font-size: 0.58rem; letter-spacing: -0.04em;}
 .bold {font-weight: 700;}
